@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tarik Tambang Jaringan - SMK Kelas 10</title>
+<style>
+:root{
+  --bg:#eef6ff; --card:#ffffff; --ink:#17324d; --blue:#2774e6;
+  --red:#ef5350; --green:#21a366; --yellow:#ffd54f; --line:#5d4037;
+}
+*{box-sizing:border-box}
+body{
+  margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  color:var(--ink); background:linear-gradient(135deg,#dff0ff,#f8fbff);
+  min-height:100vh;
+}
+.app{max-width:1100px;margin:auto;padding:24px}
+header{text-align:center;margin-bottom:18px}
+h1{margin:0 0 6px;font-size:clamp(28px,5vw,46px)}
+.subtitle{margin:0;color:#52708c}
+.game-card{
+  background:rgba(255,255,255,.94); border-radius:24px;
+  box-shadow:0 12px 40px rgba(33,75,120,.14); overflow:hidden;
+}
+.scorebar{display:flex;justify-content:space-between;gap:10px;padding:14px 20px;background:#163b5c;color:#fff;font-weight:700}
+.team-score{display:flex;gap:8px;align-items:center}
+.arena{padding:22px 22px 8px}
+.teams{display:flex;justify-content:space-between;font-weight:800;font-size:20px}
+.team-left{color:#1769d1}.team-right{color:#d83c3c}
+.tug{
+  position:relative;height:180px;margin:8px 0 18px;
+  display:flex;align-items:center;justify-content:center;overflow:hidden;
+  background:linear-gradient(#bfe4ff 0 66%,#8acb70 66% 100%);
+  border-radius:18px;border:3px solid #b6d5e9;
+}
+.ground-line{position:absolute;bottom:17%;height:55%;border-left:4px dashed rgba(0,0,0,.28)}
+.center-mark{left:50%}
+.rope{
+  position:absolute;width:86%;height:12px;border-radius:10px;background:repeating-linear-gradient(90deg,#8d5b38 0 18px,#a96f45 18px 35px);
+  transition:transform .65s cubic-bezier(.2,.8,.2,1);
+  box-shadow:0 3px 3px rgba(0,0,0,.18)
+}
+.flag{position:absolute;top:calc(50% - 58px);width:5px;height:85px;background:#68432c;border-radius:3px;transition:transform .65s cubic-bezier(.2,.8,.2,1)}
+.flag:after{content:"";position:absolute;top:0;left:5px;border-left:34px solid #ffca28;border-top:13px solid transparent;border-bottom:13px solid transparent}
+.person{position:absolute;bottom:16%;font-size:48px;z-index:3}
+.person.left{left:4%}.person.right{right:4%}
+.question-area{padding:24px}
+.progress{height:10px;background:#e3edf5;border-radius:20px;overflow:hidden;margin-bottom:16px}
+.progress>div{height:100%;background:var(--blue);transition:width .3s}
+.question{font-size:clamp(20px,3vw,27px);font-weight:800;margin:0 0 18px;line-height:1.3}
+.options{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+button{
+  border:0;border-radius:14px;padding:15px 16px;font-size:16px;font-weight:700;
+  cursor:pointer;background:#edf5ff;color:#1b4e78;border:2px solid #d4e6f7;
+  transition:.18s;
+}
+button:hover:not(:disabled){transform:translateY(-2px);background:#dcecff}
+button:disabled{cursor:default;opacity:.9}
+.option.correct{background:#d9f5e4;border-color:#42b878;color:#17643a}
+.option.wrong{background:#ffe0df;border-color:#ed7773;color:#9c2926}
+.feedback{min-height:58px;margin-top:15px;padding:13px 15px;border-radius:13px;font-weight:700;background:#f3f7fa}
+.feedback.ok{background:#e4f7ea;color:#17643a}.feedback.no{background:#fff0ef;color:#9c2926}
+.controls{display:flex;justify-content:center;gap:10px;margin-top:18px}
+.primary{background:#2774e6;color:white;border:0}
+.secondary{background:#edf1f5}
+.result{display:none;text-align:center;padding:32px}
+.result.show{display:block}
+.result h2{font-size:38px;margin:0 0 10px}
+.result p{font-size:19px}
+.hidden{display:none}
+@media(max-width:650px){
+ .options{grid-template-columns:1fr}
+ .person{font-size:38px}
+ .tug{height:150px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <h1>🪢 Tarik Tambang Jaringan</h1>
+  <p class="subtitle">Game pengenalan jaringan komputer — SMK Kelas 10</p>
+</header>
+
+<div class="game-card">
+  <div class="scorebar">
+    <div class="team-score">👨‍🎓 Siswa: <span id="leftScore">0</span></div>
+    <div>Pertanyaan <span id="qNum">1</span>/5</div>
+    <div class="team-score">💻 Komputer: <span id="rightScore">0</span></div>
+  </div>
+
+  <section class="arena">
+    <div class="teams"><span class="team-left">👨‍🎓 SISWA</span><span class="team-right">KOMPUTER 💻</span></div>
+    <div class="tug">
+      <div class="ground-line center-mark"></div>
+      <div class="person left">🧑‍🎓</div>
+      <div class="person right">🤖</div>
+      <div class="rope" id="rope"></div>
+      <div class="flag" id="flag"></div>
+    </div>
+  </section>
+
+  <section class="question-area" id="quiz">
+    <div class="progress"><div id="progress"></div></div>
+    <p class="question" id="question"></p>
+    <div class="options" id="options"></div>
+    <div class="feedback" id="feedback">Pilih jawaban yang menurutmu paling tepat.</div>
+    <div class="controls">
+      <button class="primary hidden" id="nextBtn">Pertanyaan Berikutnya →</button>
+    </div>
+  </section>
+
+  <section class="result" id="result">
+    <h2 id="resultTitle"></h2>
+    <p id="resultText"></p>
+    <button class="primary" id="restartBtn">🔄 Main Lagi</button>
+  </section>
+</div>
+</div>
+
+<script>
+const questions = [
+  {
+    q:"Perangkat yang digunakan untuk menghubungkan beberapa komputer dalam satu jaringan LAN adalah …",
+    options:["Switch","Keyboard","Printer","Monitor"],
+    answer:0,
+    explain:"Switch menghubungkan beberapa perangkat dalam jaringan LAN agar dapat saling berkomunikasi."
+  },
+  {
+    q:"Alamat yang digunakan untuk mengidentifikasi sebuah perangkat dalam jaringan disebut …",
+    options:["IP Address","MAC Address saja","Nama folder","SSID saja"],
+    answer:0,
+    explain:"IP Address digunakan sebagai alamat logis perangkat dalam jaringan."
+  },
+  {
+    q:"Kabel yang umum digunakan untuk menghubungkan komputer ke switch pada jaringan Ethernet adalah …",
+    options:["UTP","HDMI","VGA","USB Type-C"],
+    answer:0,
+    explain:"Kabel UTP, dengan konektor RJ-45, banyak digunakan untuk koneksi Ethernet."
+  },
+  {
+    q:"Jika sebuah komputer ingin terhubung ke internet melalui jaringan lokal, perangkat yang biasanya menjadi penghubung ke jaringan lain adalah …",
+    options:["Router","Mouse","Hub USB","Scanner"],
+    answer:0,
+    explain:"Router meneruskan paket data antarjaringan, misalnya dari LAN menuju internet."
+  },
+  {
+    q:"Apa fungsi utama DNS dalam jaringan komputer?",
+    options:[
+      "Menerjemahkan nama domain menjadi alamat IP",
+      "Mengubah kabel UTP menjadi Wi-Fi",
+      "Menyimpan semua file pengguna",
+      "Memperbesar kecepatan prosesor"
+    ],
+    answer:0,
+    explain:"DNS (Domain Name System) membantu menerjemahkan nama seperti example.com menjadi alamat IP."
+  }
+];
+
+let current=0, leftScore=0, rightScore=0, position=0;
+
+const $ = id => document.getElementById(id);
+const qEl=$("question"), optEl=$("options"), feedback=$("feedback");
+const rope=$("rope"), flag=$("flag");
+
+function render(){
+  const item=questions[current];
+  $("qNum").textContent=current+1;
+  $("progress").style.width=((current)/questions.length*100)+"%";
+  qEl.textContent=item.q;
+  optEl.innerHTML="";
+  feedback.className="feedback";
+  feedback.textContent="Pilih jawaban yang menurutmu paling tepat.";
+  $("nextBtn").classList.add("hidden");
+
+  item.options.forEach((text,i)=>{
+    const b=document.createElement("button");
+    b.className="option";
+    b.textContent=String.fromCharCode(65+i)+". "+text;
+    b.onclick=()=>answer(i);
+    optEl.appendChild(b);
+  });
+}
+
+function answer(selected){
+  const item=questions[current];
+  [...optEl.children].forEach(b=>b.disabled=true);
+  [...optEl.children][item.answer].classList.add("correct");
+
+  if(selected===item.answer){
+    leftScore++;
+    position -= 1;
+    feedback.className="feedback ok";
+    feedback.textContent="✅ Benar! Tali tertarik ke kiri. "+item.explain;
+  }else{
+    rightScore++;
+    position += 1;
+    [...optEl.children][selected].classList.add("wrong");
+    feedback.className="feedback no";
+    feedback.textContent="❌ Kurang tepat. Tali bergerak ke kanan. "+item.explain;
+  }
+
+  $("leftScore").textContent=leftScore;
+  $("rightScore").textContent=rightScore;
+  moveRope();
+  $("progress").style.width=((current+1)/questions.length*100)+"%";
+
+  if(current < questions.length-1){
+    $("nextBtn").classList.remove("hidden");
+  }else{
+    setTimeout(showResult,650);
+  }
+}
+
+function moveRope(){
+  const clamped=Math.max(-5,Math.min(5,position));
+  rope.style.transform=`translateX(${clamped*7}%)`;
+  flag.style.transform=`translateX(${clamped*30}px)`;
+}
+
+$("nextBtn").onclick=()=>{current++;render()};
+$("restartBtn").onclick=()=>{
+  current=0;leftScore=0;rightScore=0;position=0;
+  $("leftScore").textContent=0;$("rightScore").textContent=0;
+  $("result").classList.remove("show");$("quiz").classList.remove("hidden");
+  moveRope();render();
+};
+
+function showResult(){
+  $("quiz").classList.add("hidden");
+  $("result").classList.add("show");
+  if(leftScore===5){
+    $("resultTitle").textContent="🏆 SISWA MENANG!";
+    $("resultText").textContent="Luar biasa! Semua 5 pertanyaan dijawab benar. Pemahaman dasar jaringanmu kuat!";
+  }else if(rightScore===5){
+    $("resultTitle").textContent="🤖 KOMPUTER MENANG!";
+    $("resultText").textContent="Komputer berhasil menarik tali karena semua jawaban siswa belum tepat. Coba lagi!";
+  }else if(leftScore>rightScore){
+    $("resultTitle").textContent="🎉 SISWA MENANG!";
+    $("resultText").textContent=`Skor benar siswa ${leftScore} dan komputer ${rightScore}. Bagus!`;
+  }else if(rightScore>leftScore){
+    $("resultTitle").textContent="💻 KOMPUTER MENANG!";
+    $("resultText").textContent=`Skor benar siswa ${leftScore} dan komputer ${rightScore}. Ayo coba lagi!`;
+  }else{
+    $("resultTitle").textContent="🤝 SERI!";
+    $("resultText").textContent=`Siswa ${leftScore} — Komputer ${rightScore}. Ulangi untuk mendapatkan kemenangan!`;
+  }
+}
+render();
+</script>
+</body>
+</html>
