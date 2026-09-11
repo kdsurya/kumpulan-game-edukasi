@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Tarik Tambang - Pengenalan Jaringan (SMK Kelas 10)</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="container">
+    <h1>Tarik Tambang: Pengenalan Jaringan</h1>
+    <p class="intro">Tim kiri = Siswa. Tim kanan = Komputer. Jawab 5 pertanyaan seputar jaringan. Jawaban benar menggerakkan tali ke kiri, salah menggerakkan ke kanan. Jika semua pertanyaan dijawab benar, siswa menang.</p>
+
+    <section id="game">
+      <div id="rope-area">
+        <div class="team-label left">Siswa</div>
+        <div class="rope-viewport">
+          <div id="rope" class="rope">🔗</div>
+        </div>
+        <div class="team-label right">Komputer</div>
+      </div>
+
+      <div id="info">
+        <div id="qcount">Pertanyaan <span id="current">1</span> dari <span id="total">5</span></div>
+        <div id="question" class="question"></div>
+        <div id="options" class="options"></div>
+      </div>
+
+      <div id="message" class="message"></div>
+
+      <div class="controls">
+        <button id="nextBtn" onclick="nextQuestion()" disabled>Soal Berikutnya</button>
+        <button id="restartBtn" onclick="restartGame()" style="display:none">Mulai Ulang</button>
+      </div>
+    </section>
+
+    <footer class="credits">Dibuat untuk pembelajaran SMK Kelas 10 - Topik: Dasar Jaringan</footer>
+  </main>
+
+  <script src="game.js"></script>
+</body>
+</html>
