@@ -6,6 +6,7 @@
 * https://kdsurya.github.io/kumpulan-game-edukasi/game-grok/
 * https://kdsurya.github.io/kumpulan-game-edukasi/game-gemini/
 * https://kdsurya.github.io/kumpulan-game-edukasi/game-deepseek/
+* https://kdsurya.github.io/kumpulan-game-edukasi/game-lumi/
 * https://makeplay.ai/p/ncq573zdnn
 * https://game-tarik-tambang-jaringan--deyvive.replit.app/
 
