@@ -3,6 +3,8 @@
 * https://kdsurya.github.io/kumpulan-game-edukasi/tarik_tambang_jaringan_smk-chatgpt/
 * https://kdsurya.github.io/kumpulan-game-edukasi/game-qwen/
 * https://kdsurya.github.io/kumpulan-game-edukasi/game-kimi/
+* https://kdsurya.github.io/kumpulan-game-edukasi/game-grok/
+* https://kdsurya.github.io/kumpulan-game-edukasi/game-gemini/
 * https://makeplay.ai/p/ncq573zdnn
 * https://game-tarik-tambang-jaringan--deyvive.replit.app/
 
