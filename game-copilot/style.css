@@ -28,11 +28,14 @@ h1{margin:0 0 8px;font-size:20px}
 #qcount{font-size:13px;color:var(--muted);margin-bottom:6px}
 .question{font-size:16px;margin-bottom:10px}
 .options{display:flex;flex-direction:column;gap:8px}
-.option-btn{padding:10px 12px;border-radius:8px;border:1px solid #e2e8f0;background:white;cursor:pointer;text-align:left;transition:all 160ms}
-.option-btn:hover{transform:translateY(-3px);box-shadow:0 3px 10px rgba(2,6,23,0.06)}
+/* Make option buttons clearly visible against white backgrounds */
+.option-btn{
+  padding:10px 12px;border-radius:8px;border:1px solid #cbd5e1;background:#ffffff;color:#0f172a;cursor:pointer;text-align:left;transition:all 160ms, transform 120ms;box-shadow:0 1px 0 rgba(2,6,23,0.03);
+}
+.option-btn:hover{transform:translateY(-3px);box-shadow:0 6px 18px rgba(2,6,23,0.06)}
 .option-btn.disabled{opacity:0.6;pointer-events:none}
-.option-btn.correct{background:linear-gradient(90deg,#dcfce7,#bbf7d0);border-color:#86efac}
-.option-btn.wrong{background:linear-gradient(90deg,#fee2e2,#fecaca);border-color:#fca5a5}
+.option-btn.correct{background:linear-gradient(90deg,#dcfce7,#bbf7d0);border-color:#86efac;color:#064e3b}
+.option-btn.wrong{background:linear-gradient(90deg,#fee2e2,#fecaca);border-color:#fca5a5;color:#7f1d1d}
 
 .message{min-height:34px;font-weight:600;margin-top:6px}
 .controls{display:flex;gap:12px;align-items:center;margin-top:6px}
