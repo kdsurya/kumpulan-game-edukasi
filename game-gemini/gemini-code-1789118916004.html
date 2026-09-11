@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tarik Tambang Jaringan - SMK Kelas 10</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        header h1 {
+            font-size: 2rem;
+            color: #f1c40f;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        header p {
+            font-size: 1rem;
+            color: #bdc3c7;
+        }
+
+        /* Container Arena Tarik Tambang */
+        .arena {
+            width: 100%;
+            max-width: 900px;
+            background: #2c3e50;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .score-board {
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            padding: 0 10px;
+        }
+
+        .team-left-score { color: #3498db; }
+        .team-right-score { color: #e74c3c; }
+
+        /* Jalur Tarik Tambang */
+        .rope-track {
+            position: relative;
+            height: 100px;
+            background: #34495e;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px dashed #7f8c8d;
+        }
+
+        .center-line {
+            position: absolute;
+            width: 4px;
+            height: 100%;
+            background: #f1c40f;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .tug-element {
+            position: absolute;
+            display: flex;
+            align-items: center;
+            transition: left 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .character {
+            font-size: 2.5rem;
+            padding: 0 5px;
+        }
+
+        .rope {
+            width: 120px;
+            height: 8px;
+            background: #d35400;
+            border-radius: 4px;
+            position: relative;
+        }
+
+        .flag {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1.5rem;
+        }
+
+        /* Panel Pertanyaan & Kontrol */
+        .game-panel {
+            width: 100%;
+            max-width: 900px;
+            background: #34495e;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+            text-align: center;
+        }
+
+        .turn-indicator {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            font-weight: bold;
+            padding: 8px;
+            border-radius: 5px;
+            display: inline-block;
+        }
+
+        .turn-left { background: #2980b9; }
+        .turn-right { background: #c0392b; }
+
+        .question-box {
+            font-size: 1.15rem;
+            margin-bottom: 20px;
+            line-height: 1.5;
+            background: #2c3e50;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 5px solid #f1c40f;
+            text-align: left;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .btn-option {
+            background: #3b5998;
+            color: white;
+            border: none;
+            padding: 12px 15px;
+            font-size: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+            text-align: left;
+        }
+
+        .btn-option:hover:not(:disabled) {
+            background: #4e6fb2;
+            transform: translateY(-2px);
+        }
+
+        .btn-option:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        .btn-option:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* Layar Hasil Akhir / Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .modal-content {
+            background: #2c3e50;
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            max-width: 450px;
+            width: 90%;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        }
+
+        .modal-content h2 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            color: #f1c40f;
+        }
+
+        .modal-content p {
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+        }
+
+        .btn-restart {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .btn-restart:hover {
+            background: #219653;
+        }
+
+        /* Notifikasi Jawaban */
+        #feedback {
+            margin-top: 15px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            min-height: 25px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Tarik Tambang Jaringan Komputer</h1>
+        <p>SMK Kelas X - TKJ / TJKT / PPLG</p>
+    </header>
+
+    <div class="arena">
+        <div class="score-board">
+            <span class="team-left-score">Blue Team (Kiri)</span>
+            <span>Soal <span id="current-q-num">1</span> dari 5</span>
+            <span class="team-right-score">Red Team (Kanan)</span>
+        </div>
+        
+        <div class="rope-track">
+            <div class="center-line"></div>
+            <div class="tug-element" id="tugElement" style="left: 50%;">
+                <span class="character">🟦</span>
+                <div class="rope">
+                    <div class="flag">🚩</div>
+                </div>
+                <span class="character">🟥</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="game-panel">
+        <div id="turnIndicator" class="turn-indicator turn-left">Giliran: Blue Team (Kiri)</div>
+        <div class="question-box" id="questionBox">Memuat pertanyaan...</div>
+        <div class="options-grid" id="optionsGrid">
+            <!-- Pilihan jawaban dimuat secara dinamis via JavaScript -->
+        </div>
+        <div id="feedback"></div>
+    </div>
+
+    <!-- Modal Pemenang -->
+    <div class="modal" id="resultModal">
+        <div class="modal-content">
+            <h2 id="winnerText">Permainan Selesai!</h2>
+            <p id="winnerDesc">Deskripsi pemenang akan muncul di sini.</p>
+            <button class="btn-restart" onclick="resetGame()">Main Lagi</button>
+        </div>
+    </div>
+
+    <script>
+        // Data 5 Pertanyaan Seputar Jaringan Komputer Kelas X SMK
+        const questions = [
+            {
+                q: "Perangkat keras jaringan yang berfungsi untuk menghubungkan beberapa komputer dalam satu jaringan LAN menggunakan kabel UTP disebut...",
+                options: ["A. Router", "B. Switch / Hub", "C. Modem", "D. Access Point"],
+                answer: 1 // Indeks B
+            },
+            {
+                q: "Protokol standar yang digunakan dalam internet untuk mengirimkan dan menerima halaman web (HTTP/HTTPS) bekerja pada lapisan (layer) OSI model ke berapa?",
+                options: ["A. Layer 3 (Network)", "B. Layer 4 (Transport)", "C. Layer 7 (Application)", "D. Layer 2 (Data Link)"],
+                answer: 2 // Indeks C
+            },
+            {
+                q: "Alamat logis berukuran 32-bit yang mengidentifikasikan sebuah komputer pada jaringan TCP/IP disebut...",
+                options: ["A. MAC Address", "B. IP Address", "C. Broadcast Address", "D. Port Address"],
+                answer: 1 // Indeks B
+            },
+            {
+                q: "Kabel jaringan yang paling umum digunakan pada topologi star dengan konektor RJ-45 adalah...",
+                options: ["A. Kabel Coaxial", "B. Kabel Fiber Optic", "C. Kabel UTP (Unshielded Twisted Pair)", "D. Kabel Serial"],
+                answer: 2 // Indeks C
+            },
+            {
+                q: "Topologi jaringan di mana semua perangkat terhubung langsung ke satu perangkat pusat (hub/switch) dinamakan topologi...",
+                options: ["A. Topologi Bus", "B. Topologi Ring", "C. Topologi Star (Bintang)", "D. Topologi Mesh"],
+                answer: 2 // Indeks C
+            }
+        ];
+
+        let currentQuestion = 0;
+        let currentTeam = 0; // 0 = Tim Kiri (Blue), 1 = Tim Kanan (Red)
+        let ropePosition = 50; // Persentase posisi dari kiri (0% = kiri penuh, 100% = kanan penuh)
+
+        const tugElement = document.getElementById('tugElement');
+        const questionBox = document.getElementById('questionBox');
+        const optionsGrid = document.getElementById('optionsGrid');
+        const turnIndicator = document.getElementById('turnIndicator');
+        const currentQNum = document.getElementById('current-q-num');
+        const feedback = document.getElementById('feedback');
+        const resultModal = document.getElementById('resultModal');
+        const winnerText = document.getElementById('winnerText');
+        const winnerDesc = document.getElementById('winnerDesc');
+
+        function loadQuestion() {
+            if (currentQuestion >= questions.length) {
+                endGame();
+                return;
+            }
+
+            currentQNum.innerText = currentQuestion + 1;
+            const qData = questions[currentQuestion];
+            questionBox.innerText = qData.q;
+            optionsGrid.innerHTML = '';
+            feedback.innerText = '';
+
+            // Update indikator giliran tim
+            if (currentTeam === 0) {
+                turnIndicator.innerText = "Giliran: 🟦 Blue Team (Kiri)";
+                turnIndicator.className = "turn-indicator turn-left";
+            } else {
+                turnIndicator.innerText = "Giliran: 🟥 Red Team (Kanan)";
+                turnIndicator.className = "turn-indicator turn-right";
+            }
+
+            qData.options.forEach((opt, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'btn-option';
+                btn.innerText = opt;
+                btn.onclick = () => checkAnswer(index);
+                optionsGrid.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(selectedIndex) {
+            const qData = questions[currentQuestion];
+            const buttons = optionsGrid.getElementsByTagName('button');
+            
+            // Nonaktifkan semua tombol setelah diklik
+            for (let btn of buttons) {
+                btn.disabled = true;
+            }
+
+            const isCorrect = (selectedIndex === qData.answer);
+
+            if (isCorrect) {
+                if (currentTeam === 0) {
+                    // Tim Kiri benar -> Tarik tali ke kiri (kurangi persentase)
+                    ropePosition -= 10;
+                    feedback.style.color = '#3498db';
+                    feedback.innerText = "Benar! 🟦 Blue Team berhasil menarik tali ke kiri!";
+                } else {
+                    // Tim Kanan benar -> Tarik tali ke kanan (tambah persentase)
+                    ropePosition += 10;
+                    feedback.style.color = '#e74c3c';
+                    feedback.innerText = "Benar! 🟥 Red Team berhasil menarik tali ke kanan!";
+                }
+            } else {
+                feedback.style.color = '#e67e22';
+                feedback.innerText = `Kurang tepat! Jawaban yang benar adalah: ${qData.options[qData.answer]}`;
+            }
+
+            // Batasi posisi tali agar tidak keluar arena (min 15%, max 85%)
+            if (ropePosition < 15) ropePosition = 15;
+            if (ropePosition > 85) ropePosition = 85;
+
+            // Update posisi elemen visual tali
+            tugElement.style.left = ropePosition + '%';
+
+            // Pindah ke pertanyaan/giliran berikutnya setelah jeda singkat
+            setTimeout(() => {
+                currentQuestion++;
+                currentTeam = 1 - currentTeam; // Gantigiliran tim (0 jadi 1, 1 jadi 0)
+                loadQuestion();
+            }, 2500);
+        }
+
+        function endGame() {
+            resultModal.style.display = 'flex';
+            if (ropePosition < 50) {
+                winnerText.innerText = "🏆 Pemenang: 🟦 Blue Team (Kiri)!";
+                winnerDesc.innerText = "Selamat untuk Blue Team karena berhasil mendominasi dan menarik tali ke sisi kiri!";
+                winnerText.style.color = "#3498db";
+            } else if (ropePosition > 50) {
+                winnerText.innerText = "🏆 Pemenang: 🟥 Red Team (Kanan)!";
+                winnerDesc.innerText = "Selamat untuk Red Team karena berhasil mendominasi dan menarik tali ke sisi kanan!";
+                winnerText.style.color = "#e74c3c";
+            } else {
+                winnerText.innerText = "🤝 Hasil Imbang (Seri)!";
+                winnerDesc.innerText = "Pertandingan sangat sengit! Posisi tali berada tepat di tengah.";
+                winnerText.style.color = "#f1c40f";
+            }
+        }
+
+        function resetGame() {
+            currentQuestion = 0;
+            currentTeam = 0;
+            ropePosition = 50;
+            tugElement.style.left = '50%';
+            resultModal.style.display = 'none';
+            loadQuestion();
+        }
+
+        // Jalankan game saat halaman dimuat
+        window.onload = loadQuestion;
+    </script>
+</body>
+</html>
