@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tarik Tambang Jaringan - SMK Kelas 10</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: radial-gradient(circle at 20% 0%, #1e293b 0%, #0f172a 45%, #020617 100%);
+    min-height: 100vh;
+    color: #e2e8f0;
+    padding: 16px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .wrap { width: 100%; max-width: 940px; }
+
+  /* ===== HEADER ===== */
+  header { text-align: center; margin-bottom: 14px; }
+  header h1 {
+    font-size: clamp(20px, 4vw, 30px);
+    background: linear-gradient(90deg, #22d3ee, #a78bfa, #fb7185);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    letter-spacing: .5px;
+  }
+  header p {
+    font-size: clamp(11px, 2.4vw, 13.5px);
+    color: #94a3b8;
+    margin-top: 6px;
+  }
+
+  /* ===== SCOREBOARD ===== */
+  .scoreboard {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .team-card {
+    flex: 1;
+    background: rgba(30, 41, 59, .75);
+    border: 1px solid rgba(148, 163, 184, .18);
+    border-radius: 14px;
+    padding: 10px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    backdrop-filter: blur(6px);
+  }
+  .team-card.left { border-left: 4px solid #22d3ee; }
+  .team-card.right { border-right: 4px solid #fb7185; text-align: right; }
+  .team-card .tag {
+    font-size: 10px;
+    letter-spacing: 1.4px;
+    color: #64748b;
+    font-weight: 700;
+  }
+  .team-card strong { font-size: clamp(12px, 2.6vw, 15px); }
+  .team-card.left strong { color: #67e8f9; }
+  .team-card.right strong { color: #fda4af; }
+  .team-card .stat { font-size: 11.5px; color: #94a3b8; }
+  .team-card .stat b { color: #f8fafc; }
+
+  .vs {
+    font-weight: 900;
+    font-size: 13px;
+    color: #475569;
+    letter-spacing: 1px;
+  }
+
+  /* ===== ARENA ===== */
+  .arena {
+    position: relative;
+    height: 190px;
+    border-radius: 18px;
+    background:
+      radial-gradient(ellipse at 50% 120%, rgba(34,211,238,.09), transparent 60%),
+      radial-gradient(ellipse at 50% 120%, rgba(251,113,133,.09), transparent 60%),
+      linear-gradient(180deg, #131c31 0%, #0b1220 100%);
+    border: 1px solid rgba(148, 163, 184, .13);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 12px;
+    overflow: hidden;
+    margin-bottom: 16px;
+    box-shadow: inset 0 0 60px rgba(0,0,0,.55);
+  }
+
+  /* rumput / lantai */
+  .arena::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 42px;
+    background: repeating-linear-gradient(
+      90deg,
+      rgba(34,211,238,.05) 0 22px,
+      rgba(251,113,133,.05) 22px 44px
+    );
+    border-top: 1px solid rgba(148,163,184,.1);
+  }
+
+  .team-members {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    font-size: clamp(22px, 4.6vw, 34px);
+    z-index: 4;
+    transition: transform .45s cubic-bezier(.34,1.56,.64,1);
+    position: relative;
+  }
+  .team-members .label {
+    position: absolute;
+    bottom: -26px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 9.5px;
+    letter-spacing: 1.6px;
+    font-weight: 800;
+    white-space: nowrap;
+  }
+  .team-members.left .label { color: #22d3ee; }
+  .team-members.right .label { color: #fb7185; }
+
+  .team-members.left.pull { transform: translateX(-9px); }
+  .team-members.right.pull { transform: translateX(9px); }
+
+  /* ===== ROPE ===== */
+  .rope-area {
+    position: relative;
+    flex: 1;
+    height: 100%;
+    margin: 0 8px;
+    z-index: 3;
+  }
+
+  .rope {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 11px;
+    margin-top: -5.5px;
+    border-radius: 8px;
+    background: repeating-linear-gradient(
+      60deg,
+      #b45309 0 7px,
+      #854d0e 7px 14px
+    );
+    box-shadow: 0 4px 12px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.18);
+  }
+
+  .center-line {
+    position: absolute;
+    top: 6%;
+    bottom: 6%;
+    left: 50%;
+    width: 2px;
+    background: repeating-linear-gradient(
+      180deg,
+      rgba(148,163,184,.55) 0 6px,
+      transparent 6px 12px
+    );
+    transform: translateX(-50%);
+  }
+
+  .knot {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 32% 30%, #fca5a5, #dc2626 70%);
+    border: 3px solid #fff;
+    box-shadow: 0 0 18px rgba(248,113,113,.85), 0 6px 14px rgba(0,0,0,.5);
+    transform: translate(-50%, -50%);
+    transition: left .75s cubic-bezier(.34,1.3,.64,1);
+    z-index: 6;
+  }
+  .knot::after {
+    content: "";
+    position: absolute;
+    inset: -9px;
+    border-radius: 50%;
+    border: 2px solid rgba(248,113,113,.35);
+    animation: pulse 1.6s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: .8; }
+    50% { transform: scale(1.18); opacity: 0; }
+  }
+
+  .arena.shake { animation: shake .4s; }
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    25% { transform: translateX(-6px); }
+    75% { transform: translateX(6px); }
+  }
+
+  /* ===== QUIZ ===== */
+  .quiz {
+    background: rgba(30, 41, 59, .72);
+    border: 1px solid rgba(148, 163, 184, .16);
+    border-radius: 18px;
+    padding: 18px;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 18px 40px rgba(0,0,0,.4);
+  }
+
+  .quiz-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: .8px;
+    color: #94a3b8;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  #qCounter { color: #67e8f9; }
+
+  .progress {
+    height: 6px;
+    background: rgba(15, 23, 42, .9);
+    border-radius: 99px;
+    overflow: hidden;
+    margin-bottom: 16px;
+  }
+  .progress-fill {
+    height: 100%;
+    width: 0%;
+    border-radius: 99px;
+    background: linear-gradient(90deg, #22d3ee, #a78bfa);
+    transition: width .45s ease;
+  }
+
+  .question {
+    font-size: clamp(14px, 2.9vw, 17px);
+    line-height: 1.55;
+    font-weight: 600;
+    margin-bottom: 15px;
+    color: #f1f5f9;
+  }
+
+  .options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  @media (max-width: 620px) {
+    .options { grid-template-columns: 1fr; }
+  }
+
+  .option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-align: left;
+    padding: 12px 14px;
+    font-size: 13px;
+    font-family: inherit;
+    font-weight: 500;
+    color: #e2e8f0;
+    background: rgba(15, 23, 42, .75);
+    border: 1.5px solid rgba(148, 163, 184, .2);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all .18s ease;
+    line-height: 1.35;
+  }
+  .option .key {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    border-radius: 7px;
+    display: grid;
+    place-items: center;
+    font-size: 11.5px;
+    font-weight: 800;
+    background: rgba(148, 163, 184, .16);
+    color: #cbd5e1;
+  }
+  .option:hover:not(.disabled) {
+    border-color: #22d3ee;
+    background: rgba(34, 211, 238, .09);
+    transform: translateY(-2px);
+  }
+  .option.disabled { cursor: default; }
+
+  .option.correct {
+    border-color: #22c55e;
+    background: rgba(34, 197, 94, .16);
+    color: #bbf7d0;
+  }
+  .option.correct .key { background: #22c55e; color: #052e16; }
+
+  .option.wrong {
+    border-color: #ef4444;
+    background: rgba(239, 68, 68, .15);
+    color: #fecaca;
+  }
+  .option.wrong .key { background: #ef4444; color: #450a0a; }
+
+  .feedback {
+    margin-top: 14px;
+    padding: 0 14px;
+    font-size: 12.5px;
+    line-height: 1.6;
+    border-radius: 12px;
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: all .3s ease;
+  }
+  .feedback.show {
+    max-height: 200px;
+    opacity: 1;
+    padding: 12px 14px;
+  }
+  .feedback.ok {
+    background: rgba(34, 197, 94, .12);
+    border-left: 3px solid #22c55e;
+    color: #bbf7d0;
+  }
+  .feedback.no {
+    background: rgba(239, 68, 68, .12);
+    border-left: 3px solid #ef4444;
+    color: #fecaca;
+  }
+  .feedback b { display: block; margin-bottom: 4px; }
+
+  /* ===== MODAL ===== */
+  .overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(2, 6, 23, .85);
+    backdrop-filter: blur(7px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 100;
+  }
+  .overlay.show { display: flex; animation: fadeIn .3s ease; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  .modal {
+    background: linear-gradient(160deg, #1e293b, #0f172a);
+    border: 1px solid rgba(148, 163, 184, .22);
+    border-radius: 22px;
+    padding: 32px 26px;
+    max-width: 430px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 30px 70px rgba(0,0,0,.65);
+    animation: pop .4s cubic-bezier(.34,1.56,.64,1);
+  }
+  @keyframes pop { from { transform: scale(.82); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+  .modal .emoji { font-size: 56px; line-height: 1; margin-bottom: 12px; }
+  .modal h2 {
+    font-size: 24px;
+    margin-bottom: 8px;
+    letter-spacing: .5px;
+  }
+  .modal h2.win {
+    background: linear-gradient(90deg, #22d3ee, #4ade80);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .modal h2.lose {
+    background: linear-gradient(90deg, #fb7185, #f97316);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .modal p {
+    color: #94a3b8;
+    font-size: 13.5px;
+    line-height: 1.65;
+    margin-bottom: 18px;
+  }
+  .modal .final-score {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    margin-bottom: 22px;
+  }
+  .modal .final-score div {
+    background: rgba(15, 23, 42, .8);
+    border: 1px solid rgba(148,163,184,.15);
+    border-radius: 12px;
+    padding: 10px 22px;
+  }
+  .modal .final-score span { display: block; font-size: 10px; color: #64748b; letter-spacing: 1.2px; font-weight: 700; }
+  .modal .final-score b { font-size: 22px; color: #f1f5f9; }
+
+  .btn {
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: .6px;
+    padding: 13px 32px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    color: #042f2e;
+    background: linear-gradient(90deg, #22d3ee, #67e8f9);
+    box-shadow: 0 10px 26px rgba(34, 211, 238, .32);
+    transition: all .2s ease;
+  }
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 14px 32px rgba(34,211,238,.45); }
+  .btn:active { transform: translateY(0); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>🪢 TARIK TAMBANG JARINGAN</h1>
+    <p>Jawab <b style="color:#67e8f9">BENAR</b> → tali bergerak ke kiri &nbsp;•&nbsp; Jawab <b style="color:#fda4af">SALAH</b> → tali bergerak ke kanan</p>
+  </header>
+
+  <div class="scoreboard">
+    <div class="team-card left">
+      <span class="tag">TIM KIRI</span>
+      <strong>🧑‍🎓 SISWA</strong>
+      <span class="stat">Jawaban benar: <b id="sCorrect">0</b></span>
+    </div>
+    <div class="vs">VS</div>
+    <div class="team-card right">
+      <span class="tag">TIM KANAN</span>
+      <strong>💻 KOMPUTER</strong>
+      <span class="stat">Jawaban benar: <b id="cCorrect">0</b></span>
+    </div>
+  </div>
+
+  <div class="arena" id="arena">
+    <div class="team-members left" id="teamLeft">
+      <span>🧑‍🎓</span><span>👩‍🎓</span><span>👨‍🎓</span>
+      <span class="label">SISWA</span>
+    </div>
+    <div class="rope-area">
+      <div class="center-line"></div>
+      <div class="rope"></div>
+      <div class="knot" id="knot"></div>
+    </div>
+    <div class="team-members right" id="teamRight">
+      <span>💻</span><span>🖥️</span><span>🤖</span>
+      <span class="label">KOMPUTER</span>
+    </div>
+  </div>
+
+  <div class="quiz">
+    <div class="quiz-top">
+      <span id="qCounter">SOAL 1 / 5</span>
+      <span id="topic">Dasar Jaringan Komputer</span>
+    </div>
+    <div class="progress"><div class="progress-fill" id="progressFill"></div></div>
+
+    <h2 class="question" id="questionText">Memuat soal...</h2>
+    <div class="options" id="options"></div>
+    <div class="feedback" id="feedback"></div>
+  </div>
+
+</div>
+
+<!-- MODAL HASIL -->
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <div class="emoji" id="modalEmoji">🎉</div>
+    <h2 id="modalTitle">SISWA MENANG!</h2>
+    <p id="modalText"></p>
+    <div class="final-score">
+      <div><span>BENAR</span><b id="finalCorrect">0</b></div>
+      <div><span>SALAH</span><b id="finalWrong">0</b></div>
+    </div>
+    <button class="btn" id="restartBtn">🔄 MAIN LAGI</button>
+  </div>
+</div>
+
+<script>
+/* ============ BANK SOAL ============ */
+const questions = [
+  {
+    q: "Apa kepanjangan dari LAN?",
+    options: [
+      "Local Area Network",
+      "Long Area Network",
+      "Local Access Network",
+      "Linked Area Node"
+    ],
+    answer: 0,
+    explain: "LAN (Local Area Network) adalah jaringan komputer yang mencakup area kecil, seperti ruang kelas, laboratorium, kantor, atau satu gedung sekolah."
+  },
+  {
+    q: "Perangkat jaringan yang menghubungkan banyak komputer dan meneruskan data berdasarkan alamat MAC adalah...",
+    options: ["Router", "Switch", "Modem", "Repeater"],
+    answer: 1,
+    explain: "Switch bekerja pada layer Data Link dan meneruskan frame berdasarkan MAC address. Router bekerja berdasarkan IP address, sedangkan modem mengubah sinyal."
+  },
+  {
+    q: "Alamat logis yang diberikan kepada setiap perangkat agar dapat berkomunikasi dalam jaringan disebut...",
+    options: ["MAC Address", "IP Address", "SSID", "Hostname"],
+    answer: 1,
+    explain: "IP Address adalah alamat logis (contoh: 192.168.1.10). MAC Address adalah alamat fisik yang sudah tertanam pada kartu jaringan (NIC)."
+  },
+  {
+    q: "Protokol yang digunakan untuk mengirim dan menerima halaman web adalah...",
+    options: ["FTP", "SMTP", "HTTP/HTTPS", "DHCP"],
+    answer: 2,
+    explain: "HTTP/HTTPS dipakai untuk transfer halaman web. FTP untuk file, SMTP untuk email, dan DHCP untuk memberikan IP address secara otomatis."
+  },
+  {
+    q: "Alamat IPv4 terdiri dari berapa bit?",
+    options: ["16 bit", "32 bit", "64 bit", "128 bit"],
+    answer: 1,
+    explain: "IPv4 terdiri dari 32 bit yang dibagi menjadi 4 oktet (contoh: 192.168.1.1). Sedangkan IPv6 terdiri dari 128 bit."
+  }
+];
+
+/* ============ STATE ============ */
+let current = 0;
+let correctCount = 0;
+let wrongCount = 0;
+let pos = 50;          // 0 = siswa menang total, 100 = komputer menang total
+let locked = false;
+
+const knot        = document.getElementById('knot');
+const arena       = document.getElementById('arena');
+const teamLeft    = document.getElementById('teamLeft');
+const teamRight   = document.getElementById('teamRight');
+const optionsBox  = document.getElementById('options');
+const questionText= document.getElementById('questionText');
+const feedbackEl  = document.getElementById('feedback');
+const qCounter    = document.getElementById('qCounter');
+const progressFill= document.getElementById('progressFill');
+const sCorrectEl  = document.getElementById('sCorrect');
+const cCorrectEl  = document.getElementById('cCorrect');
+const overlay     = document.getElementById('overlay');
+
+/* ============ SUARA ============ */
+let audioCtx = null;
+function beep(freq, dur, type = 'sine', delay = 0) {
+  try {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const t = audioCtx.currentTime + delay;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, t);
+    gain.gain.setValueAtTime(0.07, t);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start(t);
+    osc.stop(t + dur);
+  } catch (e) { /* abaikan */ }
+}
+function sfxCorrect() { beep(880, .14, 'sine', 0); beep(1245, .18, 'sine', .11); }
+function sfxWrong()   { beep(190, .28, 'sawtooth', 0); beep(140, .3, 'sawtooth', .12); }
+
+/* ============ RENDER SOAL ============ */
+function renderQuestion() {
+  const q = questions[current];
+  locked = false;
+
+  qCounter.textContent = `SOAL ${current + 1} / ${questions.length}`;
+  progressFill.style.width = ((current) / questions.length * 100) + '%';
+  questionText.textContent = q.q;
+
+  optionsBox.innerHTML = '';
+  const keys = ['A', 'B', 'C', 'D'];
+  q.options.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option';
+    btn.innerHTML = `<span class="key">${keys[i]}</span><span>${opt}</span>`;
+    btn.addEventListener('click', () => handleAnswer(i));
+    optionsBox.appendChild(btn);
+  });
+
+  feedbackEl.className = 'feedback';
+  feedbackEl.innerHTML = '';
+}
+
+/* ============ JAWAB ============ */
+function handleAnswer(idx) {
+  if (locked) return;
+  locked = true;
+
+  const q = questions[current];
+  const isCorrect = idx === q.answer;
+  const buttons = optionsBox.querySelectorAll('.option');
+
+  buttons.forEach((b, i) => {
+    b.classList.add('disabled');
+    if (i === q.answer) b.classList.add('correct');
+    if (i === idx && !isCorrect) b.classList.add('wrong');
+  });
+
+  if (isCorrect) {
+    correctCount++;
+    pos -= 10;                      // tali bergerak ke KIRI (siswa menarik)
+    sCorrectEl.textContent = correctCount;
+    sfxCorrect();
+    teamLeft.classList.add('pull');
+    setTimeout(() => teamLeft.classList.remove('pull'), 450);
+    feedbackEl.className = 'feedback show ok';
+    feedbackEl.innerHTML = `<b>✅ BENAR! Tim Siswa menarik tali ke kiri 💪</b>${q.explain}`;
+  } else {
+    wrongCount++;
+    pos += 10;                      // tali bergerak ke KANAN (komputer menarik)
+    cCorrectEl.textContent = wrongCount;
+    sfxWrong();
+    teamRight.classList.add('pull');
+    setTimeout(() => teamRight.classList.remove('pull'), 450);
+    arena.classList.add('shake');
+    setTimeout(() => arena.classList.remove('shake'), 420);
+    feedbackEl.className = 'feedback show no';
+    feedbackEl.innerHTML = `<b>❌ SALAH! Komputer menarik tali ke kanan 🤖</b>Jawaban benar: <b style="display:inline;color:#bbf7d0">${q.options[q.answer]}</b>. ${q.explain}`;
+  }
+
+  pos = Math.max(0, Math.min(100, pos));
+  updateKnot();
+
+  setTimeout(() => {
+    current++;
+    if (current < questions.length) {
+      renderQuestion();
+    } else {
+      progressFill.style.width = '100%';
+      finishGame();
+    }
+  }, 2100);
+}
+
+/* ============ GERAKKAN TALI ============ */
+function updateKnot() {
+  // pos 0 -> 4%  |  pos 50 -> 50%  |  pos 100 -> 96%
+  const leftPct = 4 + (pos / 100) * 92;
+  knot.style.left = leftPct + '%';
+}
+
+/* ============ AKHIR PERMAINAN ============ */
+function finishGame() {
+  const studentWins = pos < 50;
+  const allCorrect = correctCount === questions.length;
+
+  document.getElementById('finalCorrect').textContent = correctCount;
+  document.getElementById('finalWrong').textContent = wrongCount;
+
+  const emojiEl = document.getElementById('modalEmoji');
+  const titleEl = document.getElementById('modalTitle');
+  const textEl  = document.getElementById('modalText');
+
+  if (studentWins) {
+    emojiEl.textContent = allCorrect ? '🏆' : '🎉';
+    titleEl.className = 'win';
+    titleEl.textContent = 'TIM SISWA MENANG!';
+    if (allCorrect) {
+      textEl.innerHTML = 'Luar biasa! Kamu menjawab <b style="color:#4ade80">SEMUA SOAL DENGAN BENAR</b>.<br>Komputer berhasil kamu kalahkan total! 🎊<br><br>Kamu sudah memahami dasar-dasar jaringan komputer dengan sangat baik.';
+      beep(660,.16,'sine',0); beep(880,.16,'sine',.14); beep(1100,.16,'sine',.28); beep(1320,.35,'sine',.42);
+    } else {
+      textEl.innerHTML = `Hebat! Kamu berhasil menang dengan <b style="color:#4ade80">${correctCount} jawaban benar</b>.<br>Pelajari lagi materi yang masih salah, ya! 💡`;
+      beep(660,.16,'sine',0); beep(990,.3,'sine',.15);
+    }
+  } else {
+    emojiEl.textContent = '🤖';
+    titleEl.className = 'lose';
+    titleEl.textContent = 'KOMPUTER MENANG!';
+    textEl.innerHTML = `Kali ini komputer yang menang 😅<br>Kamu menjawab benar <b style="color:#fda4af">${correctCount} dari ${questions.length}</b> soal.<br><br>Jangan menyerah — baca kembali materi jaringanmu lalu coba lagi!`;
+    beep(300,.3,'sawtooth',0); beep(200,.4,'sawtooth',.18);
+  }
+
+  setTimeout(() => overlay.classList.add('show'), 900);
+}
+
+/* ============ RESET ============ */
+function resetGame() {
+  current = 0;
+  correctCount = 0;
+  wrongCount = 0;
+  pos = 50;
+  locked = false;
+  sCorrectEl.textContent = '0';
+  cCorrectEl.textContent = '0';
+  progressFill.style.width = '0%';
+  knot.style.transition = 'none';
+  updateKnot();
+  requestAnimationFrame(() => {
+    knot.style.transition = 'left .75s cubic-bezier(.34,1.3,.64,1)';
+  });
+  overlay.classList.remove('show');
+  renderQuestion();
+}
+
+document.getElementById('restartBtn').addEventListener('click', resetGame);
+
+/* ============ MULAI ============ */
+renderQuestion();
+updateKnot();
+</script>
+</body>
+</html>
