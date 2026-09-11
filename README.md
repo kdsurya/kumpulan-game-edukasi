@@ -9,7 +9,7 @@
 * https://kdsurya.github.io/kumpulan-game-edukasi/game-lumi/
 * https://makeplay.ai/p/ncq573zdnn
 * https://game-tarik-tambang-jaringan--deyvive.replit.app/
-* https://kdsurya.github.io/kumpulan-game-edukasi/game-qwen2/
+* https://kdsurya.github.io/kumpulan-game-edukasi/game-copilot/
 
 # Prompt
 buatkan web game tarik tambang untuk pengenalan jaringan untuk smk kelas 10, yang berisi 5 pertanyaan seputar jaringan, tim kiri yang menjawab benar tali akan mengarah ke kiri demikian juga sebali[...]
