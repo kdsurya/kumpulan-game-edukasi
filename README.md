@@ -9,3 +9,5 @@
 * https://makeplay.ai/p/ncq573zdnn
 * https://game-tarik-tambang-jaringan--deyvive.replit.app/
 
+# Prompt
+buatkan web game tarik tambang untuk pengenalan jaringan untuk smk kelas 10, yang berisi 5 pertanyaan seputar jaringan, tim kiri yang menjawab benar tali akan mengarah ke kiri demikian juga sebaliknya kalo menjawab salah akan bergerak ke kanan. jika semua pertanyaan di jawab benar maka tim kiri atau siswa itu menang. tim kiri adalah siswa, tim kanan adalah komputer.
