@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🪢 Tarik Tambang Jaringan - SMK Kelas 10</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI', Tahoma, sans-serif; }
+  body {
+    min-height:100vh;
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    display:flex; flex-direction:column; align-items:center;
+    padding:20px; color:#fff;
+  }
+  h1 { text-shadow:2px 2px 4px rgba(0,0,0,.4); margin-bottom:4px; font-size:clamp(20px,4vw,32px); text-align:center; }
+  .subtitle { opacity:.85; margin-bottom:16px; font-size:14px; }
+
+  .scoreboard {
+    display:flex; justify-content:space-between; width:100%; max-width:800px;
+    background:rgba(255,255,255,.12); border-radius:12px; padding:10px 20px; margin-bottom:12px;
+  }
+  .team { text-align:center; font-weight:bold; font-size:18px; }
+  .team small { display:block; font-weight:normal; font-size:12px; opacity:.8; }
+  .rope-track {
+    position:relative; width:100%; max-width:800px; height:60px;
+    background:rgba(0,0,0,.25); border-radius:30px; overflow:hidden; margin-bottom:20px;
+  }
+  .rope-track::before {
+    content:''; position:absolute; left:50%; top:0; bottom:0; width:2px;
+    background:rgba(255,255,255,.35);
+  }
+  .rope {
+    position:absolute; top:50%; left:0; width:100%; height:10px;
+    background: repeating-linear-gradient(45deg,#f4a261 0 12px,#e76f51 12px 24px);
+    transform: translateY(-50%); transition: transform .8s cubic-bezier(.68,-0.4,.27,1.4);
+  }
+  .knot {
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+    width:34px; height:34px; border-radius:50%; background:#ffd166;
+    border:4px solid #e63946; box-shadow:0 3px 8px rgba(0,0,0,.4); z-index:2;
+  }
+  .mascot { position:absolute; top:50%; transform:translateY(-50%); font-size:34px; z-index:2; }
+  .mascot.left { left:10px; } .mascot.right { right:10px; }
+  .winzone {
+    position:absolute; top:0; bottom:0; width:60px; opacity:.25; z-index:1;
+  }
+  .winzone.left { left:0; background:#2ecc71; } .winzone.right { right:0; background:#e74c3c; }
+
+  .card {
+    background:#fff; color:#222; border-radius:16px; padding:24px;
+    width:100%; max-width:640px; box-shadow:0 10px 30px rgba(0,0,0,.35); text-align:center;
+  }
+  .q-num { font-size:13px; color:#888; margin-bottom:6px; font-weight:bold; letter-spacing:1px; }
+  .question { font-size:clamp(16px,3vw,20px); font-weight:bold; margin-bottom:20px; min-height:54px; }
+  .options { display:grid; gap:10px; }
+  .opt {
+    padding:13px 16px; border:2px solid #dfe6e9; border-radius:10px; cursor:pointer;
+    font-size:16px; text-align:left; background:#fafbfc; transition:all .2s;
+  }
+  .opt:hover:not(:disabled) { border-color:#2a5298; background:#eef3fb; transform:translateX(4px); }
+  .opt:disabled { cursor:default; }
+  .opt.correct { background:#d4f8d4; border-color:#2ecc71; color:#1e7d32; font-weight:bold; }
+  .opt.wrong { background:#ffd9d9; border-color:#e74c3c; color:#c0392b; font-weight:bold; }
+  .feedback { margin-top:16px; font-weight:bold; min-height:24px; font-size:15px; }
+  .feedback.good { color:#27ae60; } .feedback.bad { color:#c0392b; }
+  .next-btn {
+    margin-top:14px; padding:12px 34px; border:none; border-radius:24px; cursor:pointer;
+    background:#2a5298; color:#fff; font-size:16px; font-weight:bold; display:none;
+  }
+  .next-btn:hover { background:#1e3c72; }
+
+  .overlay {
+    position:fixed; inset:0; background:rgba(0,0,0,.75); display:none;
+    align-items:center; justify-content:center; z-index:10;
+  }
+  .overlay.show { display:flex; }
+  .result-box {
+    background:#fff; color:#222; border-radius:20px; padding:36px; text-align:center;
+    max-width:420px; width:90%; animation:pop .5s ease;
+  }
+  @keyframes pop { from { transform:scale(.6); opacity:0; } to { transform:scale(1); opacity:1; } }
+  .result-box h2 { font-size:26px; margin-bottom:8px; }
+  .result-box p { color:#555; margin-bottom:20px; }
+  .big-emoji { font-size:60px; margin-bottom:10px; }
+  .restart {
+    padding:12px 34px; border:none; border-radius:24px; cursor:pointer;
+    background:#e67e22; color:#fff; font-size:16px; font-weight:bold;
+  }
+  .restart:hover { background:#d35400; }
+  .start-btn {
+    padding:14px 44px; border:none; border-radius:28px; cursor:pointer;
+    background:#e67e22; color:#fff; font-size:18px; font-weight:bold;
+  }
+  .start-btn:hover { background:#d35400; }
+</style>
+</head>
+<body>
+
+<h1>🪢 Tarik Tambang Jaringan Komputer 🪢</h1>
+<div class="subtitle">SMK Kelas 10 • Jawab benar = tarik ke kiri! Jawab salah = ditarik komputer ke kanan!</div>
+
+<div class="scoreboard">
+  <div class="team" style="color:#7bed9f;">🧑‍🎓 SISWA<small>Tim Kiri (Kamu)</small></div>
+  <div class="team" style="color:#ffd166;" id="progress">Soal 1 / 5</div>
+  <div class="team" style="color:#ff7675;">💻 KOMPUTER<small>Tim Kanan (Lawan)</small></div>
+</div>
+
+<div class="rope-track">
+  <div class="winzone left"></div>
+  <div class="winzone right"></div>
+  <div class="rope" id="rope"></div>
+  <div class="knot" id="knot"></div>
+  <div class="mascot left">🧑‍🎓</div>
+  <div class="mascot right">🤖</div>
+</div>
+
+<div class="card">
+  <div class="q-num" id="qnum">PERTANYAAN 1</div>
+  <div class="question" id="question"></div>
+  <div class="options" id="options"></div>
+  <div class="feedback" id="feedback"></div>
+  <button class="next-btn" id="nextBtn" onclick="nextQuestion()">Soal Berikutnya ➜</button>
+</div>
+
+<div class="overlay show" id="startOverlay">
+  <div class="result-box">
+    <div class="big-emoji">🪢</div>
+    <h2>Siapa yang Lebih Kuat?</h2>
+    <p style="text-align:left; margin:14px 0;">
+      ✅ Jawab <b>benar</b> → tali ditarik ke <b>kiri (kamu menang tarik!)</b><br>
+      ❌ Jawab <b>salah</b> → komputer menarik ke <b>kanan</b><br><br>
+      Jawab <b>semua 5 pertanyaan dengan benar</b> untuk mengalahkan komputer! 💪
+    </p>
+    <button class="start-btn" onclick="startGame()">MULAI MAIN! 🎮</button>
+  </div>
+</div>
+
+<div class="overlay" id="resultOverlay">
+  <div class="result-box">
+    <div class="big-emoji" id="resultEmoji"></div>
+    <h2 id="resultTitle"></h2>
+    <p id="resultMsg"></p>
+    <button class="restart" onclick="location.reload()">🔄 Main Lagi</button>
+  </div>
+</div>
+
+<script>
+const questions = [
+  {
+    q: "Perangkat jaringan yang berfungsi menghubungkan dua jaringan berbeda (misal LAN ke internet) adalah...",
+    opts: ["Hub", "Router", "Repeater", "NIC"],
+    ans: 1
+  },
+  {
+    q: "Topologi jaringan yang menggunakan satu kabel pusat (backbone) dan terminator di kedua ujungnya adalah...",
+    opts: ["Star", "Ring", "Bus", "Mesh"],
+    ans: 2
+  },
+  {
+    q: "Berapa jumlah lapisan (layer) pada model referensi OSI?",
+    opts: ["4 lapisan", "5 lapisan", "6 lapisan", "7 lapisan"],
+    ans: 3
+  },
+  {
+    q: "IP address versi 4 (IPv4) terdiri dari ... bit.",
+    opts: ["16 bit", "32 bit", "64 bit", "128 bit"],
+    ans: 1
+  },
+  {
+    q: "Perangkat jaringan yang berfungsi sebagai pusat (central node) pada topologi star adalah...",
+    opts: ["Switch/Hub", "Modem", "Bridge", "Access Point saja"],
+    ans: 0
+  }
+];
+
+let current = 0;
+let score = 0;        // jumlah benar
+let ropeOffset = 0;   // px, positif = bergeser ke kanan
+const STEP = 90;      // px per soal
+
+function startGame() {
+  document.getElementById('startOverlay').classList.remove('show');
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const q = questions[current];
+  document.getElementById('qnum').textContent = 'PERTANYAAN ' + (current+1);
+  document.getElementById('question').textContent = q.q;
+  document.getElementById('progress').textContent = 'Soal ' + (current+1) + ' / 5';
+  document.getElementById('feedback').textContent = '';
+  document.getElementById('feedback').className = 'feedback';
+  document.getElementById('nextBtn').style.display = 'none';
+
+  const optDiv = document.getElementById('options');
+  optDiv.innerHTML = '';
+  const letters = ['A','B','C','D'];
+  q.opts.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'opt';
+    btn.innerHTML = '<b>' + letters[i] + '.</b> ' + opt;
+    btn.onclick = () => answer(i, btn);
+    optDiv.appendChild(btn);
+  });
+}
+
+function answer(i, btn) {
+  const q = questions[current];
+  const allBtns = document.querySelectorAll('.opt');
+  allBtns.forEach(b => b.disabled = true);
+
+  const fb = document.getElementById('feedback');
+
+  if (i === q.ans) {
+    btn.classList.add('correct');
+    score++;
+    ropeOffset -= STEP;  // tarik ke kiri
+    fb.textContent = '✅ BENAR! Kamu menarik tali ke kiri! 💪';
+    fb.className = 'feedback good';
+  } else {
+    btn.classList.add('wrong');
+    allBtns[q.ans].classList.add('correct');
+    ropeOffset += STEP;  // ditarik komputer ke kanan
+    fb.textContent = '❌ SALAH! Jawaban yang benar: "' + q.opts[q.ans] + '". Komputer menarik ke kanan! 😱';
+    fb.className = 'feedback bad';
+  }
+
+  // Animasi tali
+  document.getElementById('rope').style.transform =
+    'translateY(-50%) translateX(' + ropeOffset + 'px)';
+  document.getElementById('knot').style.transform =
+    'translate(-50%,-50%) translateX(' + ropeOffset + 'px)';
+
+  if (current < questions.length - 1) {
+    document.getElementById('nextBtn').style.display = 'inline-block';
+  } else {
+    setTimeout(showResult, 1600);
+  }
+}
+
+function nextQuestion() {
+  current++;
+  renderQuestion();
+}
+
+function showResult() {
+  const ov = document.getElementById('resultOverlay');
+  const emoji = document.getElementById('resultEmoji');
+  const title = document.getElementById('resultTitle');
+  const msg = document.getElementById('resultMsg');
+
+  if (score === 5) {
+    emoji.textContent = '🏆';
+    title.textContent = 'KAMU MENANG!';
+    title.style.color = '#27ae60';
+    msg.innerHTML = 'Sempurna! Semua 5 jawaban benar!<br>Kamu berhasil menarik tali sampai ke tim kiri dan mengalahkan komputer! 🎉<br><br>Skor: <b>5/5</b>';
+  } else if (score >= 3) {
+    emoji.textContent = '😅';
+    title.textContent = 'HAMPIR MENANG!';
+    title.style.color = '#e67e22';
+    msg.innerHTML = 'Bagus, tapi komputer masih lebih kuat karena ada jawaban yang salah.<br>Ayo coba lagi sampai sempurna!<br><br>Skor: <b>' + score + '/5</b>';
+  } else {
+    emoji.textContent = '🤖';
+    title.textContent = 'KOMPUTER MENANG!';
+    title.style.color = '#c0392b';
+    msg.innerHTML = 'Komputer berhasil menarik tali ke kanan! 😢<br>Pelajari lagi materi jaringan komputer lalu coba lagi ya!<br><br>Skor: <b>' + score + '/5</b>';
+  }
+  ov.classList.add('show');
+}
+</script>
+</body>
+</html>
