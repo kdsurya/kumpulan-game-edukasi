@@ -1,6 +1,6 @@
 # kumpulan-game-edukasi
 
-* https://kdsurya.github.io/kumpulan-game-edukasi/tarik_tambang_jaringan_smk-chatgpt/
+* https://kdsurya.github.io/kumpulan-game-edukasi/game-chatgpt/
 * https://kdsurya.github.io/kumpulan-game-edukasi/game-qwen/
 * https://kdsurya.github.io/kumpulan-game-edukasi/game-kimi/
 * https://kdsurya.github.io/kumpulan-game-edukasi/game-grok/
@@ -13,4 +13,4 @@
 * https://basuki.my.canva.site/tarik-tambang-jaringan
 
 # Prompt
-buatkan web game tarik tambang untuk pengenalan jaringan untuk smk kelas 10, yang berisi 5 pertanyaan seputar jaringan, tim kiri yang menjawab benar tali akan mengarah ke kiri demikian juga sebaliknya kalo menjawab salah akan bergerak ke kanan. jika semua pertanyaan di jawab benar maka tim kiri atau siswa itu menang. tim kiri adalah siswa, tim kanan adalah komputer.
+buatkan web game tarik tambang untuk pengenalan jaringan untuk smk kelas 10, yang berisi 5 pertanyaan seputar jaringan, tim kiri yang menjawab benar tali akan mengarah ke kiri demikian juga sebali[...]
