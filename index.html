@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tarik Tambang Jaringan — Game SMK Kelas X</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Titan+One&family=Chakra+Petch:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#17223B; --paper:#FFFDF4;
+  --sky1:#0D2B4E; --sky2:#14506B; --sky3:#1B6B7C;
+  --field1:#2E9E58; --field2:#27904E; --chalk:#F4F7EC;
+  --sis:#34C97C; --sis2:#1E9E5C;
+  --kom:#FF6A5C; --kom2:#E14B3E;
+  --sun:#FFC94B; --amber:#FFB43A; --cyan:#4CC9F0;
+  --chH:19cqw;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+button{font-family:inherit;cursor:pointer}
+body{
+  font-family:"Chakra Petch",sans-serif;color:var(--paper);
+  background:#0C1B31;
+  background-image:radial-gradient(rgba(255,255,255,.05) 1px,transparent 1px);
+  background-size:26px 26px;
+  min-height:100vh;overflow-x:hidden;
+}
+::selection{background:var(--amber);color:var(--ink)}
+
+/* ====== TICKER ====== */
+.ticker{background:#12223F;border-bottom:3px solid var(--ink);overflow:hidden;white-space:nowrap}
+.ticker-track{display:inline-flex;gap:2.6rem;padding:.42rem 0;animation:marquee 26s linear infinite;font-weight:600;font-size:.78rem;letter-spacing:.14em;color:#9FD6E8}
+.ticker-track b{color:var(--sun)}
+@keyframes marquee{to{transform:translateX(-50%)}}
+
+.wrap{max-width:1140px;margin:0 auto;padding:1.1rem 1rem 2.4rem}
+
+/* ====== HEADER ====== */
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:1rem;margin:.4rem 0 1rem}
+.logo h1{font-family:"Titan One";font-size:clamp(1.7rem,4.6vw,3rem);line-height:.95;color:var(--sun);
+  text-shadow:3px 3px 0 var(--ink),6px 6px 0 rgba(0,0,0,.25);letter-spacing:.02em}
+.logo .ribbon{display:inline-block;background:var(--kom);color:#fff;font-family:"Titan One";font-size:clamp(.9rem,2vw,1.25rem);
+  padding:.18em .7em;transform:rotate(-2deg) translateY(-4px);border:3px solid var(--ink);box-shadow:3px 3px 0 var(--ink);margin-left:.3rem}
+.chips{display:flex;flex-wrap:wrap;gap:.45rem;margin-top:.7rem}
+.chip{font-size:.72rem;font-weight:700;letter-spacing:.08em;padding:.28em .75em;border:2px solid rgba(255,255,255,.35);
+  border-radius:999px;color:#CFE6EF;background:rgba(255,255,255,.06)}
+.chip.g{border-color:var(--sis);color:#BFF3DA}.chip.r{border-color:var(--kom);color:#FFD3CD}
+
+/* ====== HUD ====== */
+.hud{display:grid;grid-template-columns:1fr auto 1fr;gap:.8rem;align-items:stretch;margin-bottom:.9rem}
+.tcard{background:var(--paper);color:var(--ink);border:3px solid var(--ink);border-radius:12px;box-shadow:0 6px 0 var(--ink);
+  padding:.55rem .8rem;display:flex;align-items:center;gap:.7rem;transition:transform .3s}
+.tcard.sis{border-left:10px solid var(--sis)} .tcard.kom{border-right:10px solid var(--kom);flex-direction:row-reverse;text-align:right}
+.tcard.leading{transform:translateY(-3px) scale(1.02)}
+.tcard .tname{font-family:"Titan One";font-size:clamp(.85rem,2vw,1.15rem);letter-spacing:.03em}
+.tcard .tsub{font-size:.66rem;font-weight:700;letter-spacing:.12em;opacity:.6}
+.tcard .pull{font-family:"Titan One";font-size:clamp(1.2rem,2.6vw,1.7rem);margin-left:auto}
+.tcard.kom .pull{margin-left:0;margin-right:auto}
+.pull.pop{animation:pop .45s}
+@keyframes pop{40%{transform:scale(1.45) rotate(-6deg)}}
+.tava{width:44px;height:44px;flex:none;border:3px solid var(--ink);border-radius:10px;display:grid;place-items:center}
+.tava.s{background:#DFF7E9}.tava.k{background:#FFE4E0}
+.midbox{background:var(--ink);border:3px solid #000;border-radius:12px;padding:.5rem 1rem;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.4rem;box-shadow:0 6px 0 rgba(0,0,0,.4)}
+.midbox .lbl{font-size:.6rem;font-weight:700;letter-spacing:.18em;color:#8FB6C9}
+.pips{display:flex;gap:.4rem}
+.pip{width:16px;height:16px;border-radius:50%;background:#28405F;border:2px solid #0E1A30;transition:.25s}
+.pip.cur{border-color:var(--sun);animation:blink 1s infinite}
+.pip.ok{background:var(--sis);border-color:#0d5c36;box-shadow:0 0 8px rgba(52,201,124,.8)}
+.pip.bad{background:var(--kom);border-color:#7a1f16;box-shadow:0 0 8px rgba(255,106,92,.8)}
+@keyframes blink{50%{box-shadow:0 0 10px var(--sun)}}
+.qcount{font-family:"Titan One";color:var(--sun);font-size:.95rem;letter-spacing:.05em}
+
+/* ====== ARENA ====== */
+.stage{container-type:inline-size;position:relative;height:clamp(340px,56vh,540px);border:4px solid var(--ink);border-radius:18px;
+  overflow:hidden;box-shadow:0 10px 0 var(--ink),0 24px 40px rgba(0,0,0,.45);
+  background:linear-gradient(var(--sky1),var(--sky2) 58%,var(--sky3))}
+.stage::before{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.07) 1px,transparent 1px);background-size:30px 30px;pointer-events:none}
+.stage.shake{animation:shake .45s}
+@keyframes shake{20%{transform:translateX(-7px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(3px)}}
+
+.sun{position:absolute;top:6%;right:7%;width:11cqw;height:11cqw;border-radius:50%;background:radial-gradient(circle,#FFE68A,#FFC94B 70%);
+  box-shadow:0 0 40px rgba(255,201,75,.55);animation:spinSlow 40s linear infinite}
+.sun::after{content:"";position:absolute;inset:-45%;border-radius:50%;
+  background:repeating-conic-gradient(rgba(255,201,75,.35) 0 6deg,transparent 6deg 18deg);
+  -webkit-mask:radial-gradient(circle,transparent 52%,#000 53%);mask:radial-gradient(circle,transparent 52%,#000 53%)}
+@keyframes spinSlow{to{transform:rotate(360deg)}}
+
+.cloud{position:absolute;background:#EAF6FB;border-radius:999px;opacity:.9;filter:drop-shadow(0 3px 0 rgba(0,0,0,.12))}
+.cloud::before,.cloud::after{content:"";position:absolute;background:inherit;border-radius:50%}
+.cloud.c1{width:9cqw;height:3cqw;top:12%;animation:drift 46s linear infinite}
+.cloud.c1::before{width:4cqw;height:4cqw;top:-2cqw;left:1.4cqw}.cloud.c1::after{width:3cqw;height:3cqw;top:-1.4cqw;right:1.4cqw}
+.cloud.c2{width:6.5cqw;height:2.2cqw;top:24%;opacity:.65;animation:drift 64s linear infinite;animation-delay:-20s}
+.cloud.c2::before{width:3cqw;height:3cqw;top:-1.5cqw;left:1cqw}.cloud.c2::after{width:2.2cqw;height:2.2cqw;top:-1cqw;right:1cqw}
+.cloud.c3{width:7.5cqw;height:2.5cqw;top:5%;opacity:.5;animation:drift 78s linear infinite;animation-delay:-48s}
+.cloud.c3::before{width:3.4cqw;height:3.4cqw;top:-1.7cqw;left:1.2cqw}.cloud.c3::after{width:2.4cqw;height:2.4cqw;top:-1.1cqw;right:1.2cqw}
+@keyframes drift{from{left:-14%}to{left:108%}}
+
+.netmap{position:absolute;top:4%;left:3%;width:36cqw;opacity:.35;animation:floaty 7s ease-in-out infinite alternate}
+@keyframes floaty{to{transform:translateY(1.4cqw)}}
+
+.bunting{position:absolute;top:-2px;left:-2%;width:104%;z-index:3;transform-origin:top center;animation:sway 5s ease-in-out infinite alternate}
+@keyframes sway{from{transform:rotate(-.7deg)}to{transform:rotate(.7deg)}}
+
+.sign{position:absolute;z-index:5;background:#8B5A2B;border:3px solid var(--ink);color:#FFF3D6;font-family:"Titan One";
+  font-size:1.5cqw;padding:.35em .8em;border-radius:8px;box-shadow:0 4px 0 var(--ink);transform:rotate(-5deg)}
+.sign.l{top:13%;left:3.5%}
+.sign.r{top:13%;right:3.5%;transform:rotate(4deg);background:var(--ink)}
+.sign.r::before,.sign.l::before{content:"";position:absolute;top:-9px;left:50%;width:3px;height:10px;background:var(--ink)}
+
+.crowd{position:absolute;left:0;right:0;top:calc(56% - 6.4cqw);height:6.4cqw;z-index:2;display:flex;align-items:flex-end;justify-content:center;gap:1cqw;padding:0 2cqw}
+.head{width:1.9cqw;height:1.9cqw;border-radius:50%;opacity:.9;flex:none}
+.stage.cheer .head{animation:jump .55s var(--d,0s)}
+@keyframes jump{35%{transform:translateY(-1.8cqw)}}
+
+.field{position:absolute;left:0;right:0;bottom:0;height:44%;z-index:1;
+  background:repeating-linear-gradient(90deg,var(--field1) 0 9cqw,var(--field2) 9cqw 18cqw);
+  border-top:4px solid rgba(0,0,0,.25)}
+.field::before{content:"";position:absolute;inset:0;background:linear-gradient(rgba(255,255,255,.1),transparent 30%,rgba(0,0,0,.16))}
+.cline{position:absolute;left:50%;top:0;bottom:0;width:4px;background:var(--chalk);opacity:.85;transform:translateX(-50%)}
+.wline{position:absolute;top:0;bottom:0;width:0;border-left:4px dashed var(--sun);opacity:.85}
+.wline.wl{left:29%}.wline.wr{left:71%}
+.wzone{position:absolute;top:0;bottom:0;width:29%;opacity:.16;animation:zonePulse 2.4s ease-in-out infinite}
+.wzone.zl{left:0;background:linear-gradient(90deg,var(--sis),transparent)}
+.wzone.zr{right:0;background:linear-gradient(-90deg,var(--kom),transparent)}
+@keyframes zonePulse{50%{opacity:.3}}
+.wflag{position:absolute;top:1cqw;font-family:"Titan One";font-size:1.6cqw;color:#fff;background:var(--ink);
+  padding:.2em .6em;border-radius:6px;border:2px solid rgba(255,255,255,.4);z-index:4}
+.wflag.fl{left:1.5%}.wflag.fr{right:1.5%}
+.wline.glowing{animation:glowLine .5s 6;border-left-color:#fff}
+@keyframes glowLine{50%{box-shadow:0 0 26px 8px var(--sun)}}
+
+/* ====== ROPE ====== */
+.rope{position:absolute;left:-30%;width:160%;top:var(--ropeY,57cqw);height:0;z-index:6;
+  transition:transform .85s cubic-bezier(.2,1.5,.35,1)}
+.rope .cable{position:absolute;left:0;right:0;top:-5px;height:10px;border-radius:6px;
+  background:repeating-linear-gradient(90deg,#2A6F8F 0 16px,#226180 16px 32px);
+  border:2px solid var(--ink);box-shadow:0 3px 0 rgba(0,0,0,.3)}
+.marker{position:absolute;left:50%;top:-30px;transform:translateX(-50%);width:5cqw;min-width:30px;filter:drop-shadow(0 3px 0 rgba(0,0,0,.3))}
+
+/* ====== TEAMS ====== */
+.team{position:absolute;bottom:4cqw;z-index:7;height:var(--chH);display:flex;align-items:flex-end;transition:transform .7s cubic-bezier(.3,1.4,.4,1)}
+.team.sisT{left:1.6cqw}
+.team.komT{right:1.6cqw}
+.ch{height:100%;flex:none;animation:bob 3.4s ease-in-out infinite alternate}
+.ch svg{height:100%;width:auto;display:block}
+.team.sisT .ch{margin-right:-4.2cqw}
+.team.komT .ch{margin-left:-4.2cqw}
+.ch:nth-child(1){transform:scale(1.06)}
+.ch:nth-child(2){animation-delay:.6s}
+.ch:nth-child(3){transform:scale(.9);animation-delay:1.1s}
+@keyframes bob{to{transform:translateY(-.5cqw)}}
+.team.heaveL{animation:heaveL .55s}
+.team.heaveR{animation:heaveR .55s}
+.team.slipL{animation:slipL .55s}
+.team.slipR{animation:slipR .55s}
+@keyframes heaveL{35%{translate:-1.6cqw .3cqw;rotate:-3deg}}
+@keyframes heaveR{35%{translate:1.6cqw .3cqw;rotate:3deg}}
+@keyframes slipL{35%{translate:1.1cqw .2cqw;rotate:2.4deg}}
+@keyframes slipR{35%{translate:-1.1cqw .2cqw;rotate:-2.4deg}}
+.blinklight{animation:blinkL 1.1s infinite}
+@keyframes blinkL{50%{opacity:.25}}
+
+.dust{position:absolute;width:1.4cqw;height:1.4cqw;border-radius:50%;background:rgba(244,247,236,.85);z-index:8;pointer-events:none;animation:puff .7s forwards}
+@keyframes puff{to{transform:translate(var(--dx),-2.4cqw) scale(2.4);opacity:0}}
+
+/* ====== STAMP ====== */
+.stamp{position:absolute;left:50%;top:9%;transform:translateX(-50%) rotate(-6deg) scale(0);z-index:12;text-align:center;pointer-events:none;opacity:0}
+.stamp.show{animation:stampIn 1s forwards}
+@keyframes stampIn{0%{opacity:0;transform:translateX(-50%) rotate(-14deg) scale(2.4)}22%{opacity:1;transform:translateX(-50%) rotate(-6deg) scale(1)}80%{opacity:1}100%{opacity:0;transform:translateX(-50%) rotate(-6deg) scale(.94)}}
+.stamp b{display:block;font-family:"Titan One";font-size:clamp(2rem,8cqw,4.6rem);letter-spacing:.03em;
+  -webkit-text-stroke:2px var(--ink);text-shadow:4px 4px 0 var(--ink)}
+.stamp.ok b{color:var(--sis)} .stamp.no b{color:var(--kom)}
+.stamp span{display:inline-block;margin-top:.2rem;font-weight:700;font-size:clamp(.7rem,2cqw,.95rem);
+  background:var(--ink);padding:.25em .8em;border-radius:999px;letter-spacing:.06em}
+
+/* ====== QUESTION CARD ====== */
+.qcard{margin-top:1rem;background:var(--paper);color:var(--ink);border:4px solid var(--ink);border-radius:16px;
+  box-shadow:0 8px 0 var(--ink);overflow:hidden}
+.qhead{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;
+  background:repeating-linear-gradient(-45deg,#FFEFC7 0 14px,#FFE6A8 14px 28px);border-bottom:4px solid var(--ink);padding:.6rem 1rem}
+.qchip{font-family:"Titan One";background:var(--ink);color:var(--sun);padding:.3em .9em;border-radius:8px;font-size:.9rem;letter-spacing:.05em}
+.timer{display:flex;align-items:center;gap:.6rem}
+.timer .tnum{font-family:"Titan One";font-size:1.3rem;min-width:2ch;text-align:right}
+.timer .tnum.low{color:var(--kom2);animation:blink .5s infinite}
+.tbar{width:130px;height:12px;background:#EADFC4;border:2px solid var(--ink);border-radius:99px;overflow:hidden}
+.tbar i{display:block;height:100%;width:100%;background:var(--sis);transition:width .1s linear}
+.tbar i.mid{background:var(--amber)} .tbar i.low{background:var(--kom)}
+.qbody{padding:1.1rem 1.2rem 1.3rem}
+.qtext{font-size:clamp(1.05rem,2.3vw,1.4rem);font-weight:700;line-height:1.4;margin-bottom:1rem;
+  padding-left:.9rem;border-left:6px solid var(--amber)}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:.7rem}
+.opt{display:flex;align-items:center;gap:.8rem;text-align:left;background:#fff;border:3px solid var(--ink);border-radius:12px;
+  padding:.65rem .8rem;font-size:clamp(.85rem,1.7vw,1rem);font-weight:600;color:var(--ink);
+  box-shadow:0 4px 0 var(--ink);transition:transform .15s,box-shadow .15s,background .2s}
+.opt:hover:not(:disabled){transform:translateY(-3px);box-shadow:0 7px 0 var(--ink);background:#FFF8E3}
+.opt:active:not(:disabled){transform:translateY(2px);box-shadow:0 2px 0 var(--ink)}
+.opt .lt{flex:none;width:2rem;height:2rem;display:grid;place-items:center;background:var(--ink);color:var(--sun);
+  font-family:"Titan One";border-radius:8px;transition:transform .2s}
+.opt:hover:not(:disabled) .lt{transform:rotate(-8deg) scale(1.1);background:var(--kom)}
+.opt:disabled{cursor:default}
+.opt.right{background:var(--sis);color:#fff;animation:pop .5s}
+.opt.right .lt{background:#0d5c36;color:#fff}
+.opt.wrongPick{background:var(--kom);color:#fff;animation:wiggle .4s}
+.opt.wrongPick .lt{background:#7a1f16;color:#fff}
+.opt.dim{opacity:.45}
+@keyframes wiggle{25%{transform:translateX(-5px)}50%{transform:translateX(5px)}75%{transform:translateX(-3px)}}
+.qfoot{margin-top:.9rem;font-size:.72rem;font-weight:600;letter-spacing:.06em;opacity:.55}
+
+/* ====== OVERLAYS ====== */
+.overlay{position:fixed;inset:0;z-index:60;background:rgba(7,16,31,.72);backdrop-filter:blur(3px);
+  display:grid;place-items:center;padding:1rem;animation:fadeIn .3s}
+.overlay.hidden{display:none}
+@keyframes fadeIn{from{opacity:0}}
+.poster{background:var(--paper);color:var(--ink);border:5px solid var(--ink);border-radius:20px;box-shadow:0 12px 0 var(--ink),0 30px 60px rgba(0,0,0,.5);
+  max-width:640px;width:100%;padding:1.6rem 1.6rem 1.7rem;position:relative;animation:cardIn .45s cubic-bezier(.2,1.4,.4,1)}
+@keyframes cardIn{from{transform:translateY(30px) scale(.92);opacity:0}}
+.poster .tag{display:inline-block;background:var(--ink);color:var(--cyan);font-size:.66rem;font-weight:700;letter-spacing:.22em;padding:.35em 1em;border-radius:99px}
+.poster h2{font-family:"Titan One";font-size:clamp(1.6rem,4.6vw,2.6rem);line-height:1;margin:.5rem 0 .2rem;color:var(--ink)}
+.poster h2 em{font-style:normal;color:var(--kom2)}
+.vsrow{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:.6rem;margin:1rem 0}
+.vteam{border:3px solid var(--ink);border-radius:12px;padding:.55rem .6rem;display:flex;align-items:center;gap:.55rem}
+.vteam.s{background:#E2F8EC;box-shadow:0 4px 0 var(--sis2)}
+.vteam.k{background:#FFE9E5;box-shadow:0 4px 0 var(--kom2);flex-direction:row-reverse;text-align:right}
+.vteam b{font-family:"Titan One";font-size:.92rem;display:block}
+.vteam small{font-size:.63rem;font-weight:700;opacity:.65;letter-spacing:.04em}
+.vteam svg{width:38px;height:38px}
+.vsmark{font-family:"Titan One";font-size:1.5rem;color:#fff;background:var(--amber);border:3px solid var(--ink);border-radius:50%;
+  width:2.6rem;height:2.6rem;display:grid;place-items:center;box-shadow:0 4px 0 var(--ink);transform:rotate(-8deg)}
+.rules{list-style:none;margin:.4rem 0 1.1rem;display:grid;gap:.5rem}
+.rules li{display:flex;gap:.6rem;align-items:flex-start;font-size:.86rem;font-weight:500;line-height:1.45;background:#FFF7E0;
+  border:2px solid var(--ink);border-radius:10px;padding:.5rem .7rem}
+.rules .ic{flex:none;width:1.5rem;height:1.5rem;border-radius:6px;display:grid;place-items:center;font-size:.8rem;font-weight:800;color:#fff;margin-top:.05rem}
+.ic.g{background:var(--sis2)}.ic.r{background:var(--kom2)}.ic.t{background:var(--amber)}.ic.f{background:var(--cyan);color:var(--ink)}
+.bigbtn{width:100%;font-family:"Titan One";font-size:clamp(1.1rem,3vw,1.5rem);letter-spacing:.04em;color:var(--ink);
+  background:linear-gradient(#FFD25A,var(--amber));border:4px solid var(--ink);border-radius:14px;padding:.7em 1em;
+  box-shadow:0 7px 0 var(--ink);transition:.15s}
+.bigbtn:hover{transform:translateY(-3px);box-shadow:0 10px 0 var(--ink);background:linear-gradient(#FFDD7E,#FFC254)}
+.bigbtn:active{transform:translateY(3px);box-shadow:0 2px 0 var(--ink)}
+.hint{margin-top:.7rem;text-align:center;font-size:.7rem;font-weight:600;letter-spacing:.08em;opacity:.55}
+
+.endicon{font-size:3.2rem;line-height:1;animation:bounceIn .6s}
+@keyframes bounceIn{0%{transform:scale(0)}60%{transform:scale(1.3)}100%{transform:scale(1)}}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem;margin:1rem 0 1.2rem}
+.stat{background:#F1F7F2;border:3px solid var(--ink);border-radius:12px;padding:.6rem .4rem;text-align:center}
+.stat b{display:block;font-family:"Titan One";font-size:1.4rem}
+.stat span{font-size:.62rem;font-weight:700;letter-spacing:.1em;opacity:.6}
+.reason{font-weight:700;font-size:.9rem;background:#EAF6FB;border:2px dashed var(--sky2);border-radius:10px;padding:.6rem .8rem;margin-bottom:1rem;text-align:center}
+
+.confetti{position:fixed;inset:0;pointer-events:none;z-index:70;overflow:hidden}
+.cf{position:absolute;top:-4vh;width:10px;height:16px;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(112vh) rotate(720deg)}}
+
+footer{margin-top:1.2rem;text-align:center;font-size:.7rem;letter-spacing:.12em;font-weight:600;color:#5E7A94}
+
+@media(max-width:680px){
+  .opts{grid-template-columns:1fr}
+  .hud{grid-template-columns:1fr 1fr}
+  .midbox{grid-column:1/-1;flex-direction:row;justify-content:space-between}
+  .sign{display:none}
+  :root{--chH:26cqw}
+  .stats{grid-template-columns:repeat(3,1fr)}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
+</style>
+</head>
+<body>
+
+<!-- Sprite SVG karakter -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="sis" viewBox="0 0 150 150">
+      <ellipse cx="70" cy="144" rx="46" ry="5" fill="rgba(0,0,0,.22)"/>
+      <path d="M62 104 L36 136" stroke="#17223B" stroke-width="13" stroke-linecap="round"/>
+      <path d="M62 104 L36 136" stroke="#2B4C8C" stroke-width="8" stroke-linecap="round"/>
+      <path d="M76 104 L96 138" stroke="#17223B" stroke-width="13" stroke-linecap="round"/>
+      <path d="M76 104 L96 138" stroke="#2B4C8C" stroke-width="8" stroke-linecap="round"/>
+      <ellipse cx="32" cy="140" rx="11" ry="6" fill="#FF6A5C" stroke="#17223B" stroke-width="3"/>
+      <ellipse cx="101" cy="141" rx="11" ry="6" fill="#FF6A5C" stroke="#17223B" stroke-width="3"/>
+      <path d="M52 100 h34 l-3 14 h-28 z" fill="#2B4C8C" stroke="#17223B" stroke-width="3"/>
+      <path d="M60 58 C55 76 53 90 56 102 L84 102 C87 88 87 72 82 58 Z" fill="#F4F7EC" stroke="#17223B" stroke-width="3.5"/>
+      <path d="M64 56 L71 68 L78 56" fill="none" stroke="#E14B3E" stroke-width="5" stroke-linejoin="round"/>
+      <path d="M80 66 C100 64 112 64 124 62" stroke="#17223B" stroke-width="12" stroke-linecap="round"/>
+      <path d="M80 66 C100 64 112 64 124 62" stroke="#F4F7EC" stroke-width="7" stroke-linecap="round"/>
+      <path d="M74 76 C94 78 110 72 122 66" stroke="#17223B" stroke-width="12" stroke-linecap="round"/>
+      <path d="M74 76 C94 78 110 72 122 66" stroke="#F4F7EC" stroke-width="7" stroke-linecap="round"/>
+      <circle cx="127" cy="63" r="8.5" fill="#FFCFA3" stroke="#17223B" stroke-width="3"/>
+      <circle cx="70" cy="38" r="17" fill="#FFCFA3" stroke="#17223B" stroke-width="3.5"/>
+      <circle cx="66" cy="36" r="2.3" fill="#17223B"/><circle cx="77" cy="36" r="2.3" fill="#17223B"/>
+      <path d="M66 45 q6 4.5 12 0" stroke="#17223B" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <path d="M51 30 a19 15 0 0 1 38 0 z" fill="#34C97C" stroke="#17223B" stroke-width="3"/>
+      <path d="M84 28 q17 -2 22 8 q-13 3.5 -22 -2 z" fill="#2AA362" stroke="#17223B" stroke-width="3"/>
+    </symbol>
+    <symbol id="bot" viewBox="0 0 150 150">
+      <ellipse cx="72" cy="144" rx="48" ry="5" fill="rgba(0,0,0,.22)"/>
+      <line x1="74" y1="12" x2="74" y2="22" stroke="#17223B" stroke-width="3"/>
+      <circle class="blinklight" cx="74" cy="10" r="4.5" fill="#FF6A5C" stroke="#17223B" stroke-width="2.5"/>
+      <rect x="46" y="20" width="56" height="40" rx="8" fill="#2A3A5C" stroke="#17223B" stroke-width="3.5"/>
+      <rect x="52" y="26" width="44" height="28" rx="5" fill="#0D1730"/>
+      <circle cx="64" cy="38" r="4.5" fill="#4CE0C3"/><circle cx="84" cy="38" r="4.5" fill="#4CE0C3"/>
+      <rect x="67" y="47" width="14" height="3.6" rx="1.8" fill="#4CE0C3"/>
+      <path d="M56 60 C40 62 28 64 18 66" stroke="#17223B" stroke-width="12" stroke-linecap="round"/>
+      <path d="M56 60 C40 62 28 64 18 66" stroke="#5C6F94" stroke-width="7" stroke-linecap="round"/>
+      <path d="M60 72 C42 74 28 72 18 68" stroke="#17223B" stroke-width="12" stroke-linecap="round"/>
+      <path d="M60 72 C42 74 28 72 18 68" stroke="#5C6F94" stroke-width="7" stroke-linecap="round"/>
+      <circle cx="15" cy="67" r="8.5" fill="#FF6A5C" stroke="#17223B" stroke-width="3"/>
+      <rect x="48" y="58" width="50" height="46" rx="9" fill="#3C4F76" stroke="#17223B" stroke-width="3.5"/>
+      <rect x="56" y="66" width="20" height="5" rx="2.5" fill="#17223B" opacity=".75"/>
+      <rect x="56" y="75" width="20" height="5" rx="2.5" fill="#17223B" opacity=".75"/>
+      <circle class="blinklight" cx="87" cy="92" r="4" fill="#4CE0C3"/>
+      <rect x="54" y="104" width="13" height="20" fill="#2A3A5C" stroke="#17223B" stroke-width="3"/>
+      <rect x="80" y="104" width="13" height="20" fill="#2A3A5C" stroke="#17223B" stroke-width="3"/>
+      <rect x="42" y="122" width="64" height="17" rx="8.5" fill="#22304E" stroke="#17223B" stroke-width="3"/>
+      <circle cx="56" cy="131" r="4" fill="#5C6F94"/><circle cx="74" cy="131" r="4" fill="#5C6F94"/><circle cx="92" cy="131" r="4" fill="#5C6F94"/>
+    </symbol>
+  </defs>
+</svg>
+
+<div class="ticker"><div class="ticker-track" id="tickerTrack"></div></div>
+
+<div class="wrap">
+  <header>
+    <div class="logo">
+      <h1>TARIK TAMBANG<span class="ribbon">JARINGAN</span></h1>
+      <div class="chips">
+        <span class="chip">📡 Jaringan Dasar</span>
+        <span class="chip">🎓 Kelas X SMK</span>
+        <span class="chip g">✔ Benar = tali ke kiri</span>
+        <span class="chip r">✘ Salah = tali ke kanan</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="hud">
+    <div class="tcard sis" id="cardSis">
+      <div class="tava s"><svg viewBox="0 0 150 150" width="36" height="36"><use href="#sis"/></svg></div>
+      <div><div class="tsub">TIM KIRI</div><div class="tname">SISWA</div></div>
+      <div class="pull" id="pullS">0</div>
+    </div>
+    <div class="midbox">
+      <div class="lbl">PERTANDINGAN</div>
+      <div class="pips" id="pips"></div>
+      <div class="qcount" id="qcount">SOAL 1/5</div>
+    </div>
+    <div class="tcard kom" id="cardKom">
+      <div class="tava k"><svg viewBox="0 0 150 150" width="36" height="36"><use href="#bot"/></svg></div>
+      <div><div class="tsub">TIM KANAN</div><div class="tname">KOMPUTER</div></div>
+      <div class="pull" id="pullK">0</div>
+    </div>
+  </div>
+
+  <div class="stage" id="stage">
+    <div class="sun"></div>
+    <div class="cloud c1"></div><div class="cloud c2"></div><div class="cloud c3"></div>
+    <svg class="netmap" viewBox="0 0 300 120" fill="none">
+      <g stroke="#9FD6E8" stroke-width="1.4" opacity=".9">
+        <line x1="20" y1="90" x2="90" y2="40"/><line x1="90" y1="40" x2="170" y2="70"/>
+        <line x1="170" y1="70" x2="250" y2="25"/><line x1="90" y1="40" x2="210" y2="100"/>
+        <line x1="170" y1="70" x2="210" y2="100"/>
+      </g>
+      <g fill="#CFEAF4"><circle cx="20" cy="90" r="5"/><circle cx="90" cy="40" r="6"/><circle cx="170" cy="70" r="5"/><circle cx="250" cy="25" r="6"/><circle cx="210" cy="100" r="4"/></g>
+    </svg>
+    <svg class="bunting" viewBox="0 0 1200 78" preserveAspectRatio="none">
+      <path d="M0 12 Q600 66 1200 12" fill="none" stroke="#17223B" stroke-width="3.5"/>
+      <g stroke="#17223B" stroke-width="2">
+        <polygon points="70,18 110,18 90,52" fill="#FFC94B"/><polygon points="180,26 220,26 200,60" fill="#FF6A5C"/>
+        <polygon points="290,33 330,33 310,66" fill="#34C97C"/><polygon points="400,38 440,38 420,71" fill="#4CC9F0"/>
+        <polygon points="510,41 550,41 530,74" fill="#F4F7EC"/><polygon points="650,41 690,41 670,74" fill="#FFC94B"/>
+        <polygon points="760,38 800,38 780,71" fill="#FF6A5C"/><polygon points="870,33 910,33 890,66" fill="#4CC9F0"/>
+        <polygon points="980,26 1020,26 1000,60" fill="#34C97C"/><polygon points="1090,18 1130,18 1110,52" fill="#F4F7EC"/>
+      </g>
+    </svg>
+    <div class="sign l">ARENA TARIK!</div>
+    <div class="sign r" id="roundSign">5 SOAL</div>
+
+    <div class="crowd" id="crowd"></div>
+
+    <div class="field">
+      <div class="wzone zl"></div><div class="wzone zr"></div>
+      <div class="cline"></div>
+      <div class="wline wl" id="wlineL"></div><div class="wline wr" id="wlineR"></div>
+      <div class="wflag fl">🏁 GARIS MENANG SISWA</div>
+      <div class="wflag fr">GARIS MENANG KOMPUTER 🏁</div>
+    </div>
+
+    <div class="team sisT" id="teamSis">
+      <div class="ch"><svg viewBox="0 0 150 150"><use href="#sis"/></svg></div>
+      <div class="ch"><svg viewBox="0 0 150 150"><use href="#sis"/></svg></div>
+      <div class="ch"><svg viewBox="0 0 150 150"><use href="#sis"/></svg></div>
+    </div>
+    <div class="team komT" id="teamKom">
+      <div class="ch"><svg viewBox="0 0 150 150" style="transform:scaleX(-1)"><use href="#bot"/></svg></div>
+      <div class="ch"><svg viewBox="0 0 150 150" style="transform:scaleX(-1)"><use href="#bot"/></svg></div>
+      <div class="ch"><svg viewBox="0 0 150 150" style="transform:scaleX(-1)"><use href="#bot"/></svg></div>
+    </div>
+
+    <div class="rope" id="rope">
+      <div class="cable"></div>
+      <svg class="marker" viewBox="0 0 44 62">
+        <polygon points="6,0 44,9 6,18" fill="#FFC94B" stroke="#17223B" stroke-width="2.5" stroke-linejoin="round"/>
+        <line x1="6" y1="0" x2="6" y2="30" stroke="#17223B" stroke-width="3"/>
+        <rect x="10" y="30" width="24" height="26" rx="3" fill="#F4A83C" stroke="#17223B" stroke-width="3"/>
+        <rect x="15" y="25" width="14" height="7" fill="#F4A83C" stroke="#17223B" stroke-width="2.5"/>
+        <g fill="#FFD25A"><rect x="13" y="33" width="2.6" height="8"/><rect x="16.6" y="33" width="2.6" height="8"/><rect x="20.2" y="33" width="2.6" height="8"/><rect x="23.8" y="33" width="2.6" height="8"/><rect x="27.4" y="33" width="2.6" height="8"/></g>
+        <rect x="14" y="46" width="16" height="6" rx="2" fill="#17223B" opacity=".35"/>
+      </svg>
+    </div>
+
+    <div class="stamp" id="stamp"></div>
+  </div>
+
+  <div class="qcard" id="qcard">
+    <div class="qhead">
+      <span class="qchip" id="qchip">SOAL 1 DARI 5</span>
+      <div class="timer">
+        <span style="font-size:.65rem;font-weight:700;letter-spacing:.15em">WAKTU</span>
+        <div class="tbar"><i id="tfill"></i></div>
+        <span class="tnum" id="tnum">20</span>
+      </div>
+    </div>
+    <div class="qbody">
+      <div class="qtext" id="qtext">Bersiaplah… pertandingan segera dimulai!</div>
+      <div class="opts" id="opts"></div>
+      <div class="qfoot">💡 Tips: klik pilihan jawaban, atau tekan tombol <b>1–4</b> / <b>A–D</b> di keyboard.</div>
+    </div>
+  </div>
+
+  <footer>GAME EDUKASI JARINGAN DASAR • TARIK TAMBANG EDITION • SMK KELAS X</footer>
+</div>
+
+<!-- Overlay Mulai -->
+<div class="overlay" id="startOv">
+  <div class="poster">
+    <span class="tag">GAME EDUKASI • JARINGAN DASAR</span>
+    <h2>TARIK TAMBANG <em>JARINGAN</em></h2>
+    <div class="vsrow">
+      <div class="vteam s">
+        <svg viewBox="0 0 150 150"><use href="#sis"/></svg>
+        <div><b>TIM SISWA</b><small>Kiri • jawaban benar menarik tali ke kiri</small></div>
+      </div>
+      <div class="vsmark">VS</div>
+      <div class="vteam k">
+        <svg viewBox="0 0 150 150" style="transform:scaleX(-1)"><use href="#bot"/></svg>
+        <div><b>TIM KOMPUTER</b><small>Kanan • jawaban salah menarik tali ke kanan</small></div>
+      </div>
+    </div>
+    <ul class="rules">
+      <li><span class="ic g">✔</span> Jawab <b>&nbsp;BENAR&nbsp;</b> → tali tertarik ke kiri, keunggulan untuk Tim Siswa.</li>
+      <li><span class="ic r">✘</span> Jawab <b>&nbsp;SALAH&nbsp;</b> atau waktu habis → tali tertarik ke kanan untuk Tim Komputer.</li>
+      <li><span class="ic t">⏱</span> Ada <b>&nbsp;5 soal&nbsp;</b>, masing-masing berwaktu <b>&nbsp;20 detik&nbsp;</b>.</li>
+      <li><span class="ic f">🏁</span> Bawa penanda tali melewati <b>&nbsp;garis menang&nbsp;</b> di sisimu. Jawab benar semua = <b>&nbsp;MENANG MUTLAK!</b></li>
+    </ul>
+    <button class="bigbtn" id="btnStart">🪢 MULAI TARIKAN!</button>
+    <div class="hint">MATERI: LAN • PERANGKAT JARINGAN • TOPOLOGI • KABEL & KONEKTOR • PROTOKOL</div>
+  </div>
+</div>
+
+<!-- Overlay Akhir -->
+<div class="overlay hidden" id="endOv">
+  <div class="poster" style="text-align:center">
+    <div class="endicon" id="endIcon">🏆</div>
+    <h2 id="endTitle">SISWA MENANG!</h2>
+    <div class="reason" id="endReason"></div>
+    <div class="stats">
+      <div class="stat"><b id="stBenar">0/5</b><span>JAWABAN BENAR</span></div>
+      <div class="stat"><b id="stTarik">0 : 0</b><span>TARIKAN S : K</span></div>
+      <div class="stat"><b id="stStreak">0</b><span>STREAK TERBAIK</span></div>
+    </div>
+    <button class="bigbtn" id="btnAgain">🔁 MAIN LAGI</button>
+    <div class="hint">SOAL DIACAK ULANG SETIAP PERTANDINGAN</div>
+  </div>
+</div>
+
+<div class="confetti" id="confetti"></div>
+
+<script>
+/* ================= BANK SOAL (acak 5 tiap main) ================= */
+const QUESTIONS=[
+ {q:"Kepanjangan dari LAN adalah…",o:["Local Area Network","Long Area Network","Local Access Number","Large Area Network"],a:0},
+ {q:"Perangkat yang berfungsi menghubungkan banyak komputer dalam satu jaringan lokal adalah…",o:["Switch","Printer","Proyektor","Webcam"],a:0},
+ {q:"Alamat berupa angka unik yang dimiliki setiap perangkat agar dapat saling berkomunikasi di jaringan disebut…",o:["IP Address","Email Address","Username","Password"],a:0},
+ {q:"Kabel jaringan yang menggunakan konektor RJ-45 adalah…",o:["Kabel UTP","Kabel listrik","Kabel HDMI","Kabel USB"],a:0},
+ {q:"Topologi jaringan di mana semua perangkat terhubung ke satu titik pusat disebut topologi…",o:["Bus","Star","Ring","Mesh"],a:1},
+ {q:"Perangkat yang menghubungkan dua jaringan berbeda dan menentukan jalur terbaik pengiriman data adalah…",o:["Router","Hub audio","Stabilizer","UPS"],a:0},
+ {q:"Jaringan tanpa kabel yang biasa kita gunakan sehari-hari dikenal dengan istilah…",o:["Ethernet","Powerline","Wi-Fi","LAN"],a:2},
+ {q:"Unit data yang dikirim melalui jaringan dan dipecah menjadi bagian-bagian kecil disebut…",o:["Folder","Paket","Bungkus","Kotak"],a:1},
+ {q:"Alat yang digunakan untuk memasang konektor RJ-45 ke ujung kabel UTP adalah…",o:["Solder","Obeng","Tang potong","Crimping tool"],a:3},
+ {q:"Perangkat yang mengubah sinyal digital menjadi analog dan sebaliknya adalah…",o:["Modem","Speaker","Scanner","Mouse"],a:0},
+ {q:"Kapasitas maksimum data yang dapat ditransfer dalam suatu jaringan disebut…",o:["Frekuensi","Bandwidth","Voltase","Durasi"],a:1},
+ {q:"Protokol yang digunakan untuk membuka halaman web adalah…",o:["SMTP","POP3","HTTP","FTP"],a:2}
+];
+
+/* ================= STATE ================= */
+const TOTAL=5, TIME=20, STEP=0.07, WINLINE=0.21, INSTANT=3;
+let pool=[],qi=0,disp=0,pullsS=0,pullsK=0,streak=0,best=0,answered=0,corrects=0;
+let locked=true,timerInt=null,timeLeft=TIME,lastTick=null;
+
+const $=id=>document.getElementById(id);
+const stage=$('stage'),rope=$('rope'),teamSis=$('teamSis'),teamKom=$('teamKom');
+const stamp=$('stamp'),opts=$('opts');
+
+/* ================= AUDIO ================= */
+let actx=null;
+function audio(){if(!actx){try{actx=new (window.AudioContext||window.webkitAudioContext)()}catch(e){}}return actx}
+function beep(f,d=.12,type='square',v=.12,t=0){
+  const c=audio();if(!c)return;
+  const o=c.createOscillator(),g=c.createGain();
+  o.type=type;o.frequency.value=f;o.connect(g);g.connect(c.destination);
+  const now=c.currentTime+t;
+  g.gain.setValueAtTime(v,now);g.gain.exponentialRampToValueAtTime(.0001,now+d);
+  o.start(now);o.stop(now+d);
+}
+const sfx={
+  ok(){beep(620,.1);beep(930,.16,'square',.12,.1)},
+  no(){beep(240,.16,'sawtooth',.13);beep(150,.28,'sawtooth',.13,.14)},
+  tick(){beep(950,.05,'square',.06)},
+  click(){beep(500,.05,'triangle',.08)},
+  win(){[523,659,784,1047].forEach((f,i)=>beep(f,.22,'square',.13,i*.14));beep(1319,.4,'triangle',.1,.6)},
+  lose(){[392,311,233].forEach((f,i)=>beep(f,.26,'sawtooth',.11,i*.2))}
+};
+document.addEventListener('pointerdown',()=>audio(),{once:true});
+
+/* ================= DEKORASI ================= */
+(function buildTicker(){
+  const items=["★ TARIK TAMBANG <b>JARINGAN</b>","★ JARINGAN DASAR","★ KELAS X SMK","★ SISWA <b>VS</b> KOMPUTER","★ 5 SOAL","★ JAWAB BENAR = TARIK KE KIRI"];
+  $('tickerTrack').innerHTML=(items.join(' ')+ ' ').repeat(2).split(' ').length? (items.concat(items)).map(i=>`<span>${i}</span>`).join(''):'';
+})();
+(function buildCrowd(){
+  const cols=['#FFC94B','#FF6A5C','#34C97C','#4CC9F0','#F4F7EC'];
+  let h='';for(let i=0;i<38;i++)h+=`<span class="head" style="background:${cols[i%5]};--d:${(Math.random()*.35).toFixed(2)}s"></span>`;
+  $('crowd').innerHTML=h;
+})();
+(function buildPips(){
+  let h='';for(let i=0;i<TOTAL;i++)h+=`<span class="pip" id="pip${i}"></span>`;$('pips').innerHTML=h;
+})();
+
+/* ================= UTIL ================= */
+function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]]}return b}
+function stageW(){return stage.clientWidth}
+function alignRope(){
+  const ch=document.querySelector('.team.sisT .ch');if(!ch)return;
+  const st=stage.getBoundingClientRect(),cr=ch.getBoundingClientRect();
+  stage.style.setProperty('--ropeY',((cr.top-st.top)+cr.height*0.40)+'px');
+}
+function setRope(d,instant){
+  if(instant){rope.style.transition='none'}
+  rope.style.transform=`translateX(${d*stageW()*STEP}px)`;
+  if(instant){void rope.offsetWidth;rope.style.transition=''}
+}
+function leanTeams(){
+  const l=Math.abs(disp)*stageW()*0.006,r=Math.min(6,Math.abs(disp)*1.8);
+  teamSis.style.transform=`translateX(${-l}px) rotate(${-r}deg)`;
+  teamKom.style.transform=`translateX(${l}px) rotate(${r}deg)`;
+}
+function anim(el,cls){el.classList.remove(cls);void el.offsetWidth;el.classList.add(cls);setTimeout(()=>el.classList.remove(cls),900)}
+function dust(side){
+  const rect=(side==='L'?teamSis:teamKom).getBoundingClientRect(),st=stage.getBoundingClientRect();
+  for(let i=0;i<6;i++){
+    const s=document.createElement('span');s.className='dust';
+    s.style.left=(rect.left-st.left+rect.width*(side==='L'?0.75:0.1)+Math.random()*rect.width*.15)+'px';
+    s.style.top=(rect.bottom-st.top-8-Math.random()*10)+'px';
+    s.style.setProperty('--dx',(side==='L'?-1:1)*(10+Math.random()*24)+'px');
+    stage.appendChild(s);setTimeout(()=>s.remove(),750);
+  }
+}
+function showStamp(title,ok,sub){
+  stamp.className='stamp '+(ok?'ok':'no');
+  stamp.innerHTML=`<b>${title}</b><span>${sub}</span>`;
+  void stamp.offsetWidth;stamp.classList.add('show');
+}
+function popScore(el){el.classList.remove('pop');void el.offsetWidth;el.classList.add('pop')}
+function updateHUD(){
+  $('pullS').textContent=pullsS;$('pullK').textContent=pullsK;
+  $('cardSis').classList.toggle('leading',pullsS>pullsK);
+  $('cardKom').classList.toggle('leading',pullsK>pullsS);
+  $('qcount').textContent=`SOAL ${Math.min(qi+1,TOTAL)}/${TOTAL}`;
+}
+function cheer(){anim(stage,'cheer');setTimeout(()=>stage.classList.remove('cheer'),700)}
+
+/* ================= ALUR GAME ================= */
+function startGame(){
+  pool=shuffle(QUESTIONS).slice(0,TOTAL);
+  qi=0;disp=0;pullsS=0;pullsK=0;streak=0;best=0;answered=0;corrects=0;locked=true;
+  for(let i=0;i<TOTAL;i++){const p=$('pip'+i);p.className='pip'}
+  $('startOv').classList.add('hidden');$('endOv').classList.add('hidden');
+  $('confetti').innerHTML='';
+  setRope(0,true);leanTeams();updateHUD();
+  sfx.click();
+  setTimeout(nextQuestion,450);
+}
+
+function nextQuestion(){
+  if(qi>=TOTAL){endGame(disp>0?'siswa':'komputer',false);return}
+  locked=false;
+  const q=pool[qi];
+  $('qchip').textContent=`SOAL ${qi+1} DARI ${TOTAL}`;
+  $('qtext').textContent=q.q;
+  $('qcard').style.animation='none';void $('qcard').offsetWidth;
+  $('qcard').style.animation='cardIn .4s cubic-bezier(.2,1.4,.4,1)';
+  const L=['A','B','C','D'];
+  opts.innerHTML=q.o.map((t,i)=>`<button class="opt" data-i="${i}"><span class="lt">${L[i]}</span><span>${t}</span></button>`).join('');
+  opts.querySelectorAll('.opt').forEach(b=>b.addEventListener('click',()=>choose(+b.dataset.i)));
+  for(let i=0;i<TOTAL;i++)$('pip'+i).classList.toggle('cur',i===qi);
+  updateHUD();
+  startTimer();
+}
+
+function startTimer(){
+  clearInterval(timerInt);timeLeft=TIME;lastTick=null;paintTimer();
+  timerInt=setInterval(()=>{
+    timeLeft-=0.1;paintTimer();
+    const s=Math.ceil(timeLeft);
+    if(timeLeft<=5&&s!==lastTick){lastTick=s;sfx.tick()}
+    if(timeLeft<=0){clearInterval(timerInt);choose(-1)}
+  },100);
+}
+function paintTimer(){
+  const pct=Math.max(0,timeLeft/TIME*100),f=$('tfill'),n=$('tnum');
+  f.style.width=pct+'%';
+  f.className=timeLeft<=5?'low':(timeLeft<=10?'mid':'');
+  n.textContent=Math.max(0,Math.ceil(timeLeft));
+  n.classList.toggle('low',timeLeft<=5);
+}
+
+function choose(i){
+  if(locked)return;locked=true;clearInterval(timerInt);
+  const q=pool[qi],ok=(i===q.a);
+  answered++;
+  const btns=[...opts.querySelectorAll('.opt')];
+  btns.forEach(b=>b.disabled=true);
+  btns[q.a].classList.add('right');
+  btns.forEach((b,ix)=>{if(ix!==q.a&&ix!==i)b.classList.add('dim')});
+  if(!ok&&i>=0)btns[i].classList.add('wrongPick');
+
+  if(ok){
+    corrects++;streak++;best=Math.max(best,streak);
+    disp++;pullsS++;
+    $('pip'+qi).className='pip ok';popScore($('pullS'));
+    sfx.ok();cheer();dust('L');
+    anim(teamSis,'heaveL');anim(teamKom,'slipR');
+    showStamp('BENAR!',true,'Tali tertarik ke arah SISWA! 💪');
+  }else{
+    streak=0;disp--;pullsK++;
+    $('pip'+qi).className='pip bad';popScore($('pullK'));
+    sfx.no();dust('R');
+    anim(stage,'shake');anim(teamKom,'heaveR');anim(teamSis,'slipL');
+    showStamp(i<0?'WAKTU HABIS!':'SALAH!',false,'Komputer menarik tali ke kanan! 🤖');
+  }
+  setRope(disp);leanTeams();updateHUD();
+
+  /* cek garis menang (tercapai saat semua jawaban sejauh ini benar/salah) */
+  if(disp>=INSTANT){setTimeout(()=>endGame('siswa',true),1300);return}
+  if(disp<=-INSTANT){setTimeout(()=>endGame('komputer',true),1300);return}
+  qi++;
+  setTimeout(nextQuestion,1600);
+}
+
+function endGame(winner,instant){
+  const sis=(winner==='siswa');
+  $('endIcon').textContent=sis?'🏆':'🤖';
+  $('endTitle').textContent=sis?'TIM SISWA MENANG!':'TIM KOMPUTER MENANG!';
+  $('endTitle').style.color=sis?'var(--sis2)':'var(--kom2)';
+  let reason;
+  if(instant&&sis)reason='🔥 MENANG MUTLAK! Semua jawaban benar — tarikan sempurna tanpa balas!';
+  else if(instant)reason='💀 Komputer mendominasi tarikan! Coba lagi dan rebut kembali talinya!';
+  else reason=`⚖️ Menang selisih tarikan ${pullsS} : ${pullsK} setelah 5 soal.`;
+  $('endReason').textContent=reason;
+  $('stBenar').textContent=`${corrects}/${answered}`;
+  $('stTarik').textContent=`${pullsS} : ${pullsK}`;
+  $('stStreak').textContent=best;
+  if(sis){
+    (instant?$('wlineL'):$('wlineL')).classList.add('glowing');
+    setTimeout(()=>$('wlineL').classList.remove('glowing'),3200);
+    confetti();sfx.win();
+  }else{
+    $('wlineR').classList.add('glowing');
+    setTimeout(()=>$('wlineR').classList.remove('glowing'),3200);
+    sfx.lose();
+  }
+  setTimeout(()=>$('endOv').classList.remove('hidden'),900);
+}
+
+function confetti(){
+  const box=$('confetti'),cols=['#34C97C','#FFC94B','#4CC9F0','#FF6A5C','#F4F7EC'];
+  for(let i=0;i<110;i++){
+    const p=document.createElement('span');p.className='cf';
+    p.style.left=Math.random()*100+'vw';
+    p.style.background=cols[i%cols.length];
+    p.style.animationDuration=(2.4+Math.random()*2.4)+'s';
+    p.style.animationDelay=(Math.random()*.9)+'s';
+    p.style.borderRadius=Math.random()>.5?'50%':'2px';
+    box.appendChild(p);
+  }
+  setTimeout(()=>box.innerHTML='',6000);
+}
+
+/* ================= INPUT KEYBOARD ================= */
+document.addEventListener('keydown',e=>{
+  if(!$('startOv').classList.contains('hidden')&&e.key==='Enter'){startGame();return}
+  if(!$('endOv').classList.contains('hidden')&&e.key==='Enter'){startGame();return}
+  if(locked)return;
+  const map={'1':0,'2':1,'3':2,'4':3,'a':0,'b':1,'c':2,'d':3};
+  const k=e.key.toLowerCase();
+  if(k in map)choose(map[k]);
+});
+
+$('btnStart').addEventListener('click',startGame);
+$('btnAgain').addEventListener('click',startGame);
+
+window.addEventListener('resize',()=>{setRope(disp,true);alignRope()});
+window.addEventListener('load',alignRope);
+alignRope();
+</script>
+</body>
+</html>
