@@ -1,4 +1,4 @@
-# kumpulan variasi game edukasi tarik tambang siswa vs komputer dari berbagai ai
+# kumpulan variasi game edukasi tarik tambang 1 tim
 
 * https://kdsurya.github.io/kumpulan-game-edukasi/game-chatgpt/
 * https://kdsurya.github.io/kumpulan-game-edukasi/game-qwen/
@@ -12,7 +12,7 @@
 * https://kdsurya.github.io/kumpulan-game-edukasi/game-copilot/
 * https://basuki.my.canva.site/tarik-tambang-jaringan
 
-# kumpulan variasi game edukasi tarik tambang tim kiri vs tim kanan dari berbagai ai
+# kumpulan variasi game edukasi tarik tambang 2 tim
 * https://kdsurya.github.io/kumpulan-game-edukasi/game-claude-2-tim/tarik-tambang-jaringan.html
 * https://kdsurya.github.io/kumpulan-game-edukasi/game-qwen-2-tim/index.html
 
