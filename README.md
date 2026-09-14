@@ -1,4 +1,4 @@
-# kumpulan-game-edukasi
+# kumpulan variasi game edukasi tarik tambang siswa vs komputer dari berbagai ai
 
 * https://kdsurya.github.io/kumpulan-game-edukasi/game-chatgpt/
 * https://kdsurya.github.io/kumpulan-game-edukasi/game-qwen/
@@ -7,12 +7,15 @@
 * https://kdsurya.github.io/kumpulan-game-edukasi/game-gemini/
 * https://kdsurya.github.io/kumpulan-game-edukasi/game-deepseek/
 * https://kdsurya.github.io/kumpulan-game-edukasi/game-lumi/
-* https://kdsurya.github.io/kumpulan-game-edukasi/game-claude-2-tim/tarik-tambang-jaringan.html
-* https://kdsurya.github.io/kumpulan-game-edukasi/game-qwen-2-tim/index.html
 * https://makeplay.ai/p/ncq573zdnn
 * https://game-tarik-tambang-jaringan--deyvive.replit.app/
 * https://kdsurya.github.io/kumpulan-game-edukasi/game-copilot/
 * https://basuki.my.canva.site/tarik-tambang-jaringan
+
+# kumpulan variasi game edukasi tarik tambang tim kiri vs tim kanan dari berbagai ai
+* https://kdsurya.github.io/kumpulan-game-edukasi/game-claude-2-tim/tarik-tambang-jaringan.html
+* https://kdsurya.github.io/kumpulan-game-edukasi/game-qwen-2-tim/index.html
+
 
 # Prompt satu tim lawan komputer
 buatkan web game tarik tambang untuk pengenalan jaringan untuk smk kelas 10, yang berisi 5 pertanyaan seputar jaringan, tim kiri yang menjawab benar tali akan mengarah ke kiri demikian juga sebaliknya kalo menjawab salah akan bergerak ke kanan. jika semua pertanyaan di jawab benar maka tim kiri atau siswa itu menang. tim kiri adalah siswa, tim kanan adalah komputer.
