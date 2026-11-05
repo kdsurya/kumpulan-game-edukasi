@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Labirin Quest TKJ</title>
+<style>
+:root{--bg:#eef0ff;--fg:#1d1b3a;--card:#fff;--mut:#5b5880;--line:#d6d9f5;--ac:#6c5ce7;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f0d24;--fg:#eeedff;--card:#1b1840;--mut:#a9a6d6;--line:#34306b}}
+:root[data-theme="dark"]{--bg:#0f0d24;--fg:#eeedff;--card:#1b1840;--mut:#a9a6d6;--line:#34306b}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.4 system-ui,"Segoe UI",Roboto,sans-serif}
+#app{max-width:780px;margin:0 auto;padding:10px}
+.bar{display:flex;gap:8px;justify-content:space-between;align-items:center;font-weight:700;flex-wrap:wrap}
+.chip{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:4px 12px}
+#mute{cursor:pointer;color:var(--fg);font:inherit}
+#q{background:var(--card);border:1px solid var(--line);border-left:6px solid var(--ac);border-radius:12px;padding:12px 14px;margin:8px 0;font-size:17px;font-weight:600;min-height:62px}
+#stage{position:relative}
+canvas{width:100%;display:block;border-radius:12px;background:#14122b;touch-action:none}
+#ov{position:absolute;inset:0;background:rgba(10,8,30,.86);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:18px;border-radius:12px;gap:10px}
+#ov h1{margin:0;font-size:clamp(24px,5vw,36px)}#ov p{margin:0;max-width:520px;color:#d8d6ff}
+.btn{background:var(--ac);color:#fff;border:0;border-radius:10px;padding:10px 24px;font:inherit;font-weight:700;font-size:16px;cursor:pointer}
+.btn:focus-visible,#mute:focus-visible{outline:3px solid #ffd166;outline-offset:2px}
+#leg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+@media (max-width:520px){#leg{grid-template-columns:1fr}}
+.o{display:flex;gap:8px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px}
+.o b{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;color:#111;flex:none}
+.o.x{opacity:.5;text-decoration:line-through}.o.ok{border-color:#2ecc71;box-shadow:0 0 0 2px #2ecc71}
+#pad{display:none;grid-template-columns:repeat(3,58px);gap:6px;justify-content:center;margin-top:10px}
+@media (pointer:coarse){#pad{display:grid}}
+#pad button{height:52px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--fg);font-size:22px;touch-action:none}
+</style></head><body>
+<div id="app">
+<div class="bar"><span class="chip" id="h1"></span><span class="chip" id="h2"></span><span class="chip" id="h3"></span><button class="chip" id="mute" aria-label="Suara">🔊</button></div>
+<div id="q">Tekan Mulai untuk bermain.</div>
+<div id="stage"><canvas id="c"></canvas>
+<div id="ov"></div></div>
+<div id="leg"></div>
+<div id="pad"><span></span><button data-d="u" aria-label="Atas">▲</button><span></span><button data-d="l" aria-label="Kiri">◀</button><button data-d="d" aria-label="Bawah">▼</button><button data-d="r" aria-label="Kanan">▶</button></div>
+</div>
+<script>
+const M=["#####################","#AAA#.....#.....#BBB#","#AAA......#......BBB#","#AAA#...........#BBB#","#####.....#.....#####","#...................#","#.###.#.....#.###...#","#.........P.........#","#.###.#.....#.###...#","#...................#","#####...........#####","#CCC#.....#.....#DDD#","#CCC......#......DDD#","#CCC#...........#DDD#","#####################"];
+const W=21,H=15,T=32,SX=10,SY=7,K=["A","B","C","D"];
+const R={A:{d:[4,2],c:[2,2],col:"#ff6b81"},B:{d:[16,2],c:[18,2],col:"#4cc9f0"},C:{d:[4,12],c:[2,12],col:"#ffd166"},D:{d:[16,12],c:[18,12],col:"#7ee081"}};
+const GR=M.map(r=>r.replace("P",".").split(""));
+const MC=["#c77dff","#ff5ea8","#ff9e4a","#5ee0d0"];
+const DIR={u:[0,-1],d:[0,1],l:[-1,0],r:[1,0]};
+const Q=[
+["Perangkat yang meneruskan data antar komputer dalam LAN berdasarkan MAC address adalah…","Switch","Repeater","Modem","Antena"],
+["Alamat IP versi 4 terdiri dari berapa bit?","32 bit","16 bit","64 bit","128 bit"],
+["Protokol yang membagikan alamat IP secara otomatis adalah…","DHCP","DNS","FTP","SMTP"],
+["Port default untuk layanan web HTTP adalah…","80","21","22","25"],
+["Port default untuk HTTPS adalah…","443","80","53","110"],
+["Topologi dengan semua perangkat terhubung ke satu titik pusat disebut…","Star","Bus","Ring","Mesh"],
+["Model OSI memiliki berapa lapisan?","7","4","5","9"],
+["Memori yang isinya hilang saat listrik padam adalah…","RAM","SSD","HDD","BIOS"],
+["Fungsi DNS adalah…","Menerjemahkan nama domain ke alamat IP","Membagikan IP otomatis","Mengirim email","Mengamankan kabel"],
+["Pada standar T568B, pin 1 dan 2 berwarna…","Putih-oranye dan oranye","Putih-hijau dan hijau","Putih-biru dan biru","Putih-coklat dan coklat"],
+["Konektor yang dipasang pada ujung kabel UTP adalah…","RJ-45","RJ-11","BNC","HDMI"],
+["Perintah untuk menguji konektivitas ke komputer lain adalah…","ping","cls","copy","shutdown"],
+["Alamat IP 192.168.1.10 termasuk kelas…","C","A","B","D"],
+["Subnet mask default untuk kelas C adalah…","255.255.255.0","255.0.0.0","255.255.0.0","255.255.255.255"],
+["Perangkat yang menghubungkan dua jaringan berbeda adalah…","Router","Hub","Kartu VGA","Speaker"],
+["Satuan kecepatan transfer data jaringan adalah…","bps","Volt","dpi","Hertz saja"],
+["Protokol aman untuk remote login ke server adalah…","SSH","Telnet","HTTP","TFTP"],
+["Perangkat yang memancarkan sinyal WiFi untuk klien disebut…","Access Point","Patch Panel","Crimping tool","Splitter"],
+["Lapisan OSI yang mengurus pengalamatan IP adalah…","Network","Physical","Data Link","Session"],
+["Alat untuk memasang konektor RJ-45 pada kabel UTP adalah…","Crimping tool","Obeng","Solder","Tang potong saja"]];
+const $=s=>document.querySelector(s),cv=$("#c"),g=cv.getContext("2d");cv.width=W*T;cv.height=H*T;
+const rnd=n=>Math.random()*n|0,sh=a=>a.map(v=>[Math.random(),v]).sort((a,b)=>a[0]-b[0]).map(v=>v[1]);
+let st="menu",qs=[],qi=0,cur,opts=[],ans,lives=3,score=0,used={},sealed={},mark={},mons=[],pl,inv=0,shake=0,parts=[],rings=[],held=[],last=0,now=0;
+/* ---------- audio ---------- */
+let AC,master,mus,sfx,muted=false,step=0,nt=0;
+const mf=n=>440*2**((n-69)/12);
+function initAudio(){if(AC){AC.resume();return}AC=new(window.AudioContext||window.webkitAudioContext)();master=AC.createGain();master.gain.value=.8;master.connect(AC.destination);mus=AC.createGain();mus.gain.value=.17;mus.connect(master);sfx=AC.createGain();sfx.gain.value=.55;sfx.connect(master);nt=AC.currentTime+.1;setInterval(sched,80)}
+function tone(f,t,d,type="sine",v=.3,dest){if(!AC)return;const o=AC.createOscillator(),e=AC.createGain();o.type=type;o.frequency.value=f;e.gain.setValueAtTime(0,t);e.gain.linearRampToValueAtTime(v,t+.01);e.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(e);e.connect(dest||sfx);o.start(t);o.stop(t+d+.05)}
+function noise(d,v,f0,f1){if(!AC)return;const t=AC.currentTime,n=AC.sampleRate*d|0,b=AC.createBuffer(1,n,AC.sampleRate),a=b.getChannelData(0);for(let i=0;i<n;i++)a[i]=Math.random()*2-1;const s=AC.createBufferSource();s.buffer=b;const f=AC.createBiquadFilter();f.type="lowpass";f.frequency.setValueAtTime(f0,t);f.frequency.exponentialRampToValueAtTime(f1,t+d);const e=AC.createGain();e.gain.setValueAtTime(v,t);e.gain.exponentialRampToValueAtTime(.001,t+d);s.connect(f);f.connect(e);e.connect(sfx);s.start(t)}
+const CH=[[45,[57,60,64]],[41,[53,57,60]],[48,[60,64,67]],[43,[55,59,62]]];
+const ML=[[81,0,76,0,72,0,76,79],[77,0,72,0,69,0,72,77],[76,0,72,0,67,0,72,76],[74,0,71,0,67,71,74,0]];
+function sched(){if(!AC)return;while(nt<AC.currentTime+.3){const c=(step>>3)&3,s=step&7,[b,ch]=CH[c];if(s%4===0)tone(mf(b),nt,.7,"triangle",.55,mus);tone(mf(ch[[0,1,2,1,2,1,2,1][s]]+12),nt,.25,"sine",.2,mus);const m=ML[c][s];if(m)tone(mf(m),nt,.45,"triangle",.32,mus);nt+=.2;step=(step+1)%32}}
+const sfxWin=()=>{if(!AC)return;const t=AC.currentTime;[72,76,79,84].forEach((n,i)=>tone(mf(n),t+i*.1,.45,"triangle",.5))};
+const sfxBoom=()=>{if(!AC)return;noise(.8,1,2200,60);tone(70,AC.currentTime,.6,"sine",.9)};
+const sfxHit=()=>{if(!AC)return;const t=AC.currentTime;[300,200,120].forEach((n,i)=>tone(n,t+i*.08,.15,"sawtooth",.3))};
+const sfxOver=()=>{if(!AC)return;const t=AC.currentTime;[60,57,53,48].forEach((n,i)=>tone(mf(n),t+i*.25,.5,"triangle",.5))};
+const pop=()=>noise(.16,.4,6000,500);
+$("#mute").onclick=()=>{muted=!muted;if(master)master.gain.value=muted?0:.8;$("#mute").textContent=muted?"🔇":"🔊"};
+/* ---------- logika ---------- */
+function ok(x,y,mon){const c=GR[y]&&GR[y][x];if(!c||c==="#")return false;for(const k of K)if(sealed[k]){if(R[k].d[0]===x&&R[k].d[1]===y)return false;if(mon&&c===k)return false}return true}
+function spawn(i){let x,y,n=0;do{x=1+rnd(19);y=1+rnd(13);n++}while((GR[y][x]!=="."||Math.abs(x-SX)+Math.abs(y-SY)<8)&&n<500);return{x,y,ox:x,oy:y,p:1,col:MC[i%4],d:[0,0]}}
+function hud(){$("#h1").textContent="Soal "+Math.min(qi+1,qs.length)+"/"+qs.length;$("#h2").textContent="Nyawa "+"♥".repeat(Math.max(lives,0));$("#h3").textContent="Skor "+score}
+function leg(){$("#leg").innerHTML=K.map((k,i)=>`<div class="o${used[k]?" x":""}${sealed[k]?" ok":""}"><b style="background:${R[k].col}">${k}</b><span>${opts[i]}${sealed[k]?" ✓":""}</span></div>`).join("")}
+function loadQ(){cur=qs[qi];opts=sh(cur.slice(1));ans=K[opts.indexOf(cur[1])];used={};sealed={};mark={};$("#q").textContent=cur[0];pl={x:SX,y:SY,ox:SX,oy:SY,p:1};const n=Math.min(5,3+(qi/4|0));mons=[];for(let i=0;i<n;i++)mons.push(spawn(i));inv=1.5;st="play";hud();leg()}
+function begin(){initAudio();qs=sh(Q).slice(0,10);qi=0;lives=3;score=0;$("#ov").style.display="none";loadQ()}
+function overlay(h){const o=$("#ov");o.style.display="flex";o.innerHTML=h;o.querySelector("button").onclick=begin;o.querySelector("button").focus()}
+function finish(win){st=win?"end":"over";if(!win)sfxOver();else sfxWin();overlay(`<h1>${win?"Selamat, kamu lolos labirin!":"Game Over"}</h1><p>Skor akhir: <b>${score}</b> dari ${qs.length*100}</p><p>${win?"Semua soal dasar TKJ berhasil dijawab.":"Monster berhasil menangkapmu. Coba lagi dan pelajari materinya."}</p><button class="btn">Main lagi</button>`)}
+function pick(k){const[cx,cy]=R[k].c,X=cx*T+T/2,Y=cy*T+T/2;mark[k]=now;if(k===ans){st="cel";sealed[k]=true;score+=100;sfxWin();for(let i=0;i<7;i++)setTimeout(()=>{burst(X+(Math.random()-.5)*220,Y+(Math.random()-.5)*160,40,null,230);pop()},i*260);mons.forEach((m,i)=>{if(GR[m.y][m.x]===k||(m.x===R[k].d[0]&&m.y===R[k].d[1])){const s=spawn(i);m.x=m.ox=s.x;m.y=m.oy=s.y;m.p=1}});setTimeout(()=>{qi++;qi>=qs.length?finish(true):loadQ()},2900)}else{used[k]=true;shake=.5;sfxBoom();rings.push({x:X,y:Y,l:1});burst(X,Y,45,["#ff9f1c","#ff4d4d","#ffd166","#777"],280)}hud();leg()}
+function hit(){lives--;sfxHit();shake=.4;burst(pl.x*T+16,pl.y*T+16,25,["#ff4d4d","#fff"],200);hud();if(lives<=0){finish(false);return}pl={x:SX,y:SY,ox:SX,oy:SY,p:1};inv=1.8}
+const ex=e=>e.ox+(e.x-e.ox)*e.p,ey=e=>e.oy+(e.y-e.oy)*e.p;
+function burst(x,y,n,cols,sp){for(let i=0;i<n;i++){const a=Math.random()*6.283,s=sp*(.4+Math.random()*.6);parts.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,l:1,c:cols?cols[rnd(cols.length)]:`hsl(${rnd(360)} 95% 62%)`,r:2+Math.random()*2.5})}}
+function update(dt){shake=Math.max(0,shake-dt);if(pl.p<1){pl.p=Math.min(1,pl.p+dt/.12);if(pl.p>=1&&st==="play"){const c=GR[pl.y][pl.x];if(K.includes(c)&&!used[c]&&!sealed[c])pick(c)}}
+if(st==="play"&&pl.p>=1&&held.length){const d=DIR[held[held.length-1]];if(ok(pl.x+d[0],pl.y+d[1],0)){pl.ox=pl.x;pl.oy=pl.y;pl.x+=d[0];pl.y+=d[1];pl.p=0}}
+const mm=Math.max(.2,.34-qi*.012);
+for(const m of mons){m.p=Math.min(1,m.p+dt/mm);if(m.p>=1){const ds=[[1,0],[-1,0],[0,1],[0,-1]].filter(d=>ok(m.x+d[0],m.y+d[1],1)),f=ds.filter(d=>d[0]!==-m.d[0]||d[1]!==-m.d[1]),a=f.length?f:ds;if(a.length){const d=a[rnd(a.length)];m.ox=m.x;m.oy=m.y;m.x+=d[0];m.y+=d[1];m.d=d;m.p=0}}}
+if(st==="play"){inv=Math.max(0,inv-dt);if(!inv)for(const m of mons)if(Math.hypot(ex(m)-ex(pl),ey(m)-ey(pl))<.6){hit();break}}}
+/* ---------- gambar ---------- */
+function sym(X,Y,t,t0){const s=Math.min(1,(now-t0)/.35),sc=s*(1+.3*Math.sin(s*Math.PI));g.save();g.translate(X,Y);g.scale(sc,sc);g.lineWidth=9;g.lineCap=g.lineJoin="round";g.beginPath();if(t==="x"){g.strokeStyle="#ff4d4d";g.moveTo(-22,-22);g.lineTo(22,22);g.moveTo(22,-22);g.lineTo(-22,22)}else{g.strokeStyle="#39e07a";g.moveTo(-24,2);g.lineTo(-8,18);g.lineTo(24,-18)}g.stroke();g.restore()}
+function draw(dt){g.save();g.clearRect(0,0,cv.width,cv.height);if(shake>0)g.translate((Math.random()-.5)*shake*16,(Math.random()-.5)*shake*16);
+for(let y=0;y<H;y++)for(let x=0;x<W;x++){if(GR[y][x]==="#"){g.fillStyle="#3b3682";g.fillRect(x*T,y*T,T,T);g.fillStyle="#4d47a8";g.fillRect(x*T,y*T,T,6)}else{g.fillStyle=(x+y)%2?"#211e48":"#1c1a3d";g.fillRect(x*T,y*T,T,T)}}
+g.textAlign="center";g.textBaseline="middle";
+for(const k of K){const r=R[k],[cx,cy]=r.c,X=cx*T+16,Y=cy*T+16;g.globalAlpha=.22;g.fillStyle=r.col;g.fillRect((cx-1)*T,(cy-1)*T,3*T,3*T);g.globalAlpha=1;
+if(used[k]){g.fillStyle="rgba(0,0,0,.55)";g.fillRect((cx-1)*T,(cy-1)*T,3*T,3*T);sym(X,Y,"x",mark[k])}
+else if(sealed[k]){g.fillStyle="rgba(46,204,113,.3)";g.fillRect((cx-1)*T,(cy-1)*T,3*T,3*T);sym(X,Y,"ok",mark[k]);g.fillStyle="#2ecc71";g.shadowColor="#2ecc71";g.shadowBlur=14;g.fillRect(r.d[0]*T+10,r.d[1]*T,12,T);g.shadowBlur=0}
+else{g.fillStyle=r.col;g.beginPath();g.arc(X,Y,21,0,7);g.fill();g.fillStyle="#111";g.font="bold 26px system-ui";g.fillText(k,X,Y+1)}}
+for(const m of mons){const X=ex(m)*T+16,Y=ey(m)*T+16;g.fillStyle=m.col;g.beginPath();g.arc(X,Y-2,13,Math.PI,0);g.lineTo(X+13,Y+12);g.lineTo(X+6,Y+8);g.lineTo(X,Y+12);g.lineTo(X-6,Y+8);g.lineTo(X-13,Y+12);g.closePath();g.fill();
+for(const s of[-5,5]){g.fillStyle="#fff";g.beginPath();g.arc(X+s,Y-4,4.2,0,7);g.fill();g.fillStyle="#111";g.beginPath();g.arc(X+s+m.d[0]*1.6,Y-4+m.d[1]*1.6,2,0,7);g.fill()}
+g.strokeStyle="#111";g.lineWidth=2;g.beginPath();g.moveTo(X-9,Y-10);g.lineTo(X-2,Y-8);g.moveTo(X+9,Y-10);g.lineTo(X+2,Y-8);g.stroke()}
+if(pl&&!(inv>0&&Math.floor(now*10)%2)){const X=ex(pl)*T+16,Y=ey(pl)*T+16;g.fillStyle="#ffe66d";g.beginPath();g.arc(X,Y,13,0,7);g.fill();g.fillStyle="#111";g.beginPath();g.arc(X-4.5,Y-3,2,0,7);g.arc(X+4.5,Y-3,2,0,7);g.fill();g.strokeStyle="#111";g.lineWidth=1.8;g.beginPath();g.arc(X,Y+1,6,.15*Math.PI,.85*Math.PI);g.stroke()}
+for(const r of rings){r.l-=dt*1.6;if(r.l>0){g.strokeStyle=`rgba(255,160,40,${r.l})`;g.lineWidth=8*r.l;g.beginPath();g.arc(r.x,r.y,(1-r.l)*95+10,0,7);g.stroke();g.fillStyle=`rgba(255,210,90,${r.l*.5})`;g.beginPath();g.arc(r.x,r.y,(1-r.l)*60+8,0,7);g.fill();if(r.l>.55){g.font="42px serif";g.fillText("💣",r.x,r.y)}}}
+rings=rings.filter(r=>r.l>0);
+for(const p of parts){p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=160*dt;p.l-=dt*.9;g.globalAlpha=Math.max(0,p.l);g.fillStyle=p.c;g.beginPath();g.arc(p.x,p.y,p.r,0,7);g.fill()}
+g.globalAlpha=1;parts=parts.filter(p=>p.l>0);g.restore()}
+function loop(ts){const dt=Math.min(.05,(ts-last)/1000||0);last=ts;now=ts/1000;if(st==="play"||st==="cel")update(dt);draw(dt);requestAnimationFrame(loop)}
+/* ---------- input ---------- */
+const KM={ArrowUp:"u",w:"u",ArrowDown:"d",s:"d",ArrowLeft:"l",a:"l",ArrowRight:"r",d:"r"};
+addEventListener("keydown",e=>{const d=KM[e.key];if(d){e.preventDefault();if(!held.includes(d))held.push(d)}});
+addEventListener("keyup",e=>{const d=KM[e.key];if(d)held=held.filter(v=>v!==d)});
+document.querySelectorAll("#pad button").forEach(b=>{const d=b.dataset.d;b.onpointerdown=e=>{e.preventDefault();if(!held.includes(d))held.push(d)};["pointerup","pointerleave","pointercancel"].forEach(ev=>b.addEventListener(ev,()=>{held=held.filter(v=>v!==d)}))});
+hud();leg();
+overlay(`<h1>Labirin Quest TKJ</h1><p>Baca soal, lalu masuk ke ruang A, B, C, atau D yang berisi jawabannya sebelum monster menangkapmu. Jawaban benar menutup ruangan dari monster. Jawaban salah meledakkan ruangan, tapi kamu masih bisa memilih ruangan lain.</p><p>Gerak: tombol panah atau WASD (di HP pakai tombol arah). Nyawa 3, 10 soal.</p><button class="btn">Mulai</button>`);
+pl={x:SX,y:SY,ox:SX,oy:SY,p:1};requestAnimationFrame(loop);
+</script></body></html>

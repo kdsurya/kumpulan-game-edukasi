@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Labirin Quest TKJ - Game Edukasi Jaringan Komputer</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛡️</text></svg>">
+</head>
+<body>
+
+  <!-- Start Screen Overlay -->
+  <div id="startScreen" class="start-screen-overlay">
+    <div class="start-card">
+      <div class="start-header">
+        <div class="start-icon">🌐</div>
+        <h1 class="start-title">LABIRIN QUEST: DASAR TKJ</h1>
+        <p class="start-desc">Jelajahi labirin, amankan opsi yang tepat, dan hindari bug/malware!</p>
+      </div>
+
+      <div class="guide-steps">
+        <div class="guide-step">
+          <div class="guide-step-title"><span>🧩</span> 1. Baca Soal & Opsi</div>
+          <div class="guide-step-text">Setiap soal memiliki 4 opsi jawaban ([A], [B], [C], [D]) yang tersebar di 4 sudut labirin.</div>
+        </div>
+        <div class="guide-step">
+          <div class="guide-step-title"><span>👾</span> 2. Hindari Monster</div>
+          <div class="guide-step-text">Monster bug/malware bergerak acak di lorong. Jaga 3 shield kamu jangan sampai habis!</div>
+        </div>
+        <div class="guide-step">
+          <div class="guide-step-title"><span>🔒</span> 3. Jawaban Benar (Aman)</div>
+          <div class="guide-step-text">Pintu area langsung terkunci rapat dari monster, terdengar jingle menang dan efek kembang api!</div>
+        </div>
+        <div class="guide-step">
+          <div class="guide-step-title"><span>💥</span> 4. Jawaban Salah (Bom)</div>
+          <div class="guide-step-text">Terjadi ledakan bom dengan tanda silang. Kamu bisa langsung kabur dan mencoba opsi lainnya!</div>
+        </div>
+      </div>
+
+      <button id="btnStartGame" class="btn-start-game">🎮 MULAI QUEST SEKARANG</button>
+    </div>
+  </div>
+
+  <!-- Game Container -->
+  <div class="game-container">
+    
+    <!-- Header Bar -->
+    <header class="header-bar">
+      <div class="logo-area">
+        <span class="logo-icon">🛡️</span>
+        <div>
+          <h1 class="game-title">LABIRIN QUEST TKJ</h1>
+          <p class="game-subtitle">Teknik Komputer dan Jaringan</p>
+        </div>
+      </div>
+
+      <div class="header-controls">
+        <button id="btnToggleBGM" class="btn-ctrl" title="Nyalakan/Matikan Musik Instrumen">🎵 Musik: ON</button>
+        <button id="btnToggleSFX" class="btn-ctrl" title="Nyalakan/Matikan Efek Suara">🔊 SFX: ON</button>
+        <button id="btnRestart" class="btn-ctrl" title="Mulai Ulang Quest">🔄 Reset</button>
+      </div>
+    </header>
+
+    <!-- Question & Options HUD -->
+    <section class="hud-question-card">
+      <div class="hud-top-meta">
+        <span id="questionCategory" class="category-badge">DASAR TKJ</span>
+        
+        <div class="stats-group">
+          <div id="hudHearts" class="hearts-display" title="Shield Avatar">
+            <span class="heart active">💙</span>
+            <span class="heart active">💙</span>
+            <span class="heart active">💙</span>
+          </div>
+          <div class="score-display">SKOR: <span id="hudScore">0</span></div>
+          <span id="questionNumber" class="category-badge" style="background: rgba(224, 64, 251, 0.15); border-color: rgba(224, 64, 251, 0.4); color: #e040fb;">Soal 1 / 20</span>
+        </div>
+      </div>
+
+      <h2 id="questionText" class="question-prompt">Memuat pertanyaan...</h2>
+
+      <!-- 4 Opsi Jawaban -->
+      <div class="options-grid">
+        <div id="hudOption0" class="option-box opt-a">
+          <span class="opt-badge">[A]</span>
+          <span id="optText0" class="opt-text">Opsi A</span>
+          <span id="optStatus0" class="opt-status">PILIH DI LABIRIN</span>
+        </div>
+        <div id="hudOption1" class="option-box opt-b">
+          <span class="opt-badge">[B]</span>
+          <span id="optText1" class="opt-text">Opsi B</span>
+          <span id="optStatus1" class="opt-status">PILIH DI LABIRIN</span>
+        </div>
+        <div id="hudOption2" class="option-box opt-c">
+          <span class="opt-badge">[C]</span>
+          <span id="optText2" class="opt-text">Opsi C</span>
+          <span id="optStatus2" class="opt-status">PILIH DI LABIRIN</span>
+        </div>
+        <div id="hudOption3" class="option-box opt-d">
+          <span class="opt-badge">[D]</span>
+          <span id="optText3" class="opt-text">Opsi D</span>
+          <span id="optStatus3" class="opt-status">PILIH DI LABIRIN</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Canvas Game Labirin -->
+    <main class="canvas-wrapper">
+      <canvas id="gameCanvas" width="900" height="684"></canvas>
+    </main>
+
+    <!-- Bottom Controls Guide -->
+    <footer class="controls-bar">
+      <div>
+        🕹️ Kontrol: <span class="key-badge">W</span><span class="key-badge">A</span><span class="key-badge">S</span><span class="key-badge">D</span> atau <span class="key-badge">▲</span><span class="key-badge">◄</span><span class="key-badge">▼</span><span class="key-badge">►</span> Panah Keyboard
+      </div>
+      <div>
+        Gerakkan avatar masuk ke ruangan opsi <strong>[A]</strong>, <strong>[B]</strong>, <strong>[C]</strong>, atau <strong>[D]</strong>
+      </div>
+    </footer>
+
+    <!-- Mobile Virtual Touch D-Pad -->
+    <div class="mobile-dpad-container">
+      <div class="dpad">
+        <button id="dpadUp" class="dpad-btn up">▲</button>
+        <button id="dpadLeft" class="dpad-btn left">◄</button>
+        <button id="dpadRight" class="dpad-btn right">►</button>
+        <button id="dpadDown" class="dpad-btn down">▼</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Pop-up Modal (Success/Explanation/GameOver/Victory) -->
+  <div id="gameModal" class="modal-overlay">
+    <div class="modal-card">
+      <div id="modalHeader" class="modal-header success">
+        <span id="modalTitle">HASIL JAWABAN</span>
+      </div>
+      <div id="modalBody" class="modal-body">
+        <!-- Konten dinamis -->
+      </div>
+      <div class="modal-footer">
+        <button id="modalActionBtn" class="btn-primary">Lanjut ➔</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Script Modules -->
+  <script src="js/questions.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/maze.js"></script>
+  <script src="js/particles.js"></script>
+  <script src="js/entities.js"></script>
+  <script src="js/game.js"></script>
+
+</body>
+</html>
