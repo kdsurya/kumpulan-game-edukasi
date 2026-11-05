@@ -63,5 +63,4 @@ buatkan game web labirin quest dengan ketentuan sebagai berikut:
 ## 7. Catatan
 
 - Semua game ini dibuat untuk pembelajaran dasar jaringan dan teknologi komputer.
-- Game labirin merupakan variasi eksperimen dari prompt yang sama yang dibuat dengan beberapa AI yang berbeda.
-- Untuk versi multi-file Gemini, dapat dibuka lewat folder `game-labirin/versi-gemini/`.
+- Game-game ini merupakan variasi eksperimen dari prompt yang sama yang dibuat dengan beberapa AI yang berbeda.
