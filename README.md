@@ -21,7 +21,7 @@ Berikut daftar game edukasi yang tersedia dalam repositori ini, lengkap dengan v
 - https://kdsurya.github.io/kumpulan-game-edukasi/game-claude-2-tim/tarik-tambang-jaringan.html
 - https://kdsurya.github.io/kumpulan-game-edukasi/game-qwen-2-tim/index.html
 
-## 3. Variasi game labirin TKJ
+## 3. Variasi game labirin
 
 - [Labirin Quest TKJ — ChatGPT](https://kdsurya.github.io/kumpulan-game-edukasi/game-labirin/labirin-quest-tkj-chatgpt.html)
 - [Labirin Quest TKJ — Claude](https://kdsurya.github.io/kumpulan-game-edukasi/game-labirin/labirin-quest-tkj-claude.html)
