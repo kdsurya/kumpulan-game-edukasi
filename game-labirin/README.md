@@ -5,42 +5,11 @@
 
 ---
 
-## 📌 Penjelasan Folder Ini
-
-Folder ini adalah **ruang eksperimen "prompt → game"**. Alurnya:
-
-1. Satu brief/specifikasi tunggal ditulis sebagai sumber (**lihat [🧠 Prompt Asli](#-prompt-asli)** di bawah).
-2. Brief tersebut diberikan ke beberapa AI assistant berbeda: **ChatGPT, Claude, Grok, Meta AI, Qwen, dan Gemini**.
-3. Masing-masing assistant menghasilkan **satu versi game yang berdiri sendiri**. Jadi seluruh berkas `.html` di root folder ini adalah **output dari prompt yang sama** — bukan level, mode, atau fitur terpisah dari satu game besar.
-4. Satu versi (Gemini) kemudian dipecah menjadi **proyek multi-file** di `versi-gemini/` agar menjadi basis pengembangan yang lebih rapi.
-
 ### 🎯 Tujuan folder
 
 - **Membandingkan hasil generasi AI** pada brief yang identik: kelengkapan mekanik, kualitas visual, efisiensi kode, dan jumlah bank soal.
 - **Menyimpan prompt sumber** supaya bisa dipakai ulang atau dituning pada iterasi berikutnya.
 - **Menyediakan basis refactor** (`versi-gemini/`) yang sudah modular dan enak dikembangkan.
-
-### 📁 Struktur Folder
-
-```
-game-labirin/
-├── README.md                        # Dokumen ini: prompt sumber + penjelasan folder
-├── labirin-quest-tkj-chatgpt.html   # Hasil ChatGPT  — berkas tunggal
-├── labirin-quest-tkj-claude.html    # Hasil Claude   — berkas tunggal
-├── labirin-quest-tkj-grok.html      # Hasil Grok     — berkas tunggal
-├── labirin-quest-tkj-metaai.html    # Hasil Meta AI  — berkas tunggal (React)
-├── labirin-quest-tkj-qwen.html      # Hasil Qwen     — berkas tunggal
-└── versi-gemini/                    # Hasil Gemini   — proyek multi-file (HTML/CSS/JS)
-    ├── index.html                   #   Struktur antarmuka, HUD soal, canvas, modal
-    ├── css/style.css                #   Tema cyber-neon, animasi, layout responsif
-    ├── js/questions.js              #   Bank soal TKJ + penjelasan edukatif
-    ├── js/audio.js                  #   Web Audio API: musik instrumen (BGM) + SFX
-    ├── js/maze.js                   #   Grid labirin, 4 ruang opsi (A–D), gerbang
-    ├── js/entities.js               #   Avatar pemain + AI monster acak
-    ├── js/particles.js              #   Kembang api, ledakan bom, partikel animasi
-    ├── js/game.js                   #   Game loop, skor, nyawa, transisi soal
-    └── README.md                    #   Dokumentasi lengkap versi ini
-```
 
 ### 🧪 Perbandingan Versi
 
@@ -52,49 +21,6 @@ game-labirin/
 | `labirin-quest-tkj-metaai.html` | Meta AI | 10 | Berkas tunggal | Dibangun sebagai **React Artifact**: React + ReactDOM + `htm` sudah di-*bundle* di dalam berkas, jadi tetap bisa dibuka offline tanpa CDN. |
 | `labirin-quest-tkj-qwen.html` | Qwen | 10 | Berkas tunggal | Versi paling rapi dari sisi kode vanilla JS, memakai state terstruktur (`G{state, qi, score, lives, ...}`). |
 | `versi-gemini/` | Gemini | 21 | **Multi-file** | Versi termodular: logika dipecah ke 6 modul JS terpisah dengan komentar per modul. Bank soal terlengkap (21 soal, 14 kategori) + penjelasan edukatif. Basis pengembangan terbaik. |
-
-> **Catatan:** seluruh versi mengimplementasikan **mekanik inti yang sama** — 4 ruang opsi jawaban (A/B/C/D), monster yang bergerak acak, penyegelan ruang jawaban benar, efek kembang api + centang untuk jawaban benar, efek bom + tanda ✗ untuk jawaban salah (tanpa langsung gugur), serta musik latar instrumen sintetis.
-
-### 🎨 Perbedaan Utama yang Terlihat Saat Main
-
-| Aspek | ChatGPT | Claude | Grok | Meta AI | Qwen | Gemini (`versi-gemini/`) |
-|---|---|---|---|---|---|---|
-| Bank soal | 5 | 20 | 10 | 10 | 10 | **21** |
-| Kualitas visual | ★★☆☆☆ | ★★★☆☆ | ★★★★☆ | ★★★★☆ | ★★★★☆ | **★★★★★** |
-| Keterbacaan kode | ★★☆☆☆ | ★★☆☆☆ | ★★★★☆ | ★★★☆☆ | ★★★★☆ | **★★★★★** |
-| Modularitas | ✗ | ✗ | ✗ | ✗ | ✗ | **✓** |
-
----
-
-## 🚀 Cara Menjalankan
-
-Semua versi **tidak membutuhkan instalasi, bundler, atau dependensi** — cukup HTML5 Canvas, CSS3, dan Vanilla JavaScript.
-
-### Opsi 1 — Buka langsung (paling cepat)
-
-Klik ganda salah satu berkas `.html`, atau buka lewat browser:
-
-```bash
-xdg-open labirin-quest-tkj-grok.html      # Linux
-open labirin-quest-tkj-grok.html          # macOS
-start labirin-quest-tkj-grok.html         # Windows
-```
-
-### Opsi 2 — Local server (disarankan untuk `versi-gemini/`)
-
-```bash
-cd versi-gemini
-
-# Python 3
-python3 -m http.server 8080
-
-# atau Node.js
-npx serve .
-```
-
-Lalu buka `http://localhost:8080`.
-
-> Audio memakai **Web Audio API** dan hanya berbunyi setelah interaksi pertama (klik/tombol), sesuai kebijakan autoplay browser. File `qwen` dan `metaai` memuat Google Fonts secara opsional; game tetap berjalan tanpa koneksi internet.
 
 ### 🎮 Kontrol
 
@@ -134,26 +60,6 @@ buatkan game web labirin quest dengan ketentuan sebagai berikut:
 | Jawaban salah → efek bom + tanda ✗ | ✅ |
 | Jawaban salah → bisa lanjut memilih area lain | ✅ (tidak langsung gugur) |
 | Musik latar instrumen saja | ✅ (sintesis Web Audio API, tanpa vokal) |
-
----
-
-## 🔧 Pengembangan Lanjutan
-
-Untuk mengembangkan tanpa mengubah file lain, gunakan `versi-gemini/` sebagai basis:
-
-```bash
-cd versi-gemini
-python3 -m http.server 8080
-```
-
-Titik modifikasi yang paling sering dipakai:
-
-- `js/questions.js` → menambah/mengubah soal dan penjelasan (struktur: `question`, `options[4]`, `answer`, `explanation`, `category`)
-- `js/maze.js` → tata letak labirin, penempatan ruang A–D, dan logika gerbang penyegelan
-- `js/entities.js` → perilaku monster (kecepatan, frekuensi acak) dan karakter pemain
-- `js/audio.js` → melodi BGM dan efek suara
-- `js/particles.js` → kembang api, ledakan bom, dan efek visual lainnya
-- `js/game.js` → alur game, skor, nyawa, transisi soal, dan HUD
 
 ---
 
