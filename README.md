@@ -1,4 +1,4 @@
-# Koleksi Game Edukasi TKJ
+# Koleksi Game Edukasi
 
 Berikut daftar game edukasi yang tersedia dalam repositori ini, lengkap dengan variasi game tarik tambang dan game labirin.
 
