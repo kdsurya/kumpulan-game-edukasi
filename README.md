@@ -23,12 +23,12 @@ Berikut daftar game edukasi yang tersedia dalam repositori ini, lengkap dengan v
 
 ## 3. Variasi game labirin
 
-- [Labirin Quest TKJ — ChatGPT](https://kdsurya.github.io/kumpulan-game-edukasi/game-labirin/labirin-quest-tkj-chatgpt.html)
-- [Labirin Quest TKJ — Claude](https://kdsurya.github.io/kumpulan-game-edukasi/game-labirin/labirin-quest-tkj-claude.html)
-- [Labirin Quest TKJ — Grok](https://kdsurya.github.io/kumpulan-game-edukasi/game-labirin/labirin-quest-tkj-grok.html)
+- [Labirin Quest TKJ — ChatGPT Free](https://kdsurya.github.io/kumpulan-game-edukasi/game-labirin/labirin-quest-tkj-chatgpt.html)
+- [Labirin Quest TKJ — Claude Free Sonnet 5.5 high](https://kdsurya.github.io/kumpulan-game-edukasi/game-labirin/labirin-quest-tkj-claude.html)
+- [Labirin Quest TKJ — Grok Free Auto](https://kdsurya.github.io/kumpulan-game-edukasi/game-labirin/labirin-quest-tkj-grok.html)
 - [Labirin Quest TKJ — Meta AI](https://kdsurya.github.io/kumpulan-game-edukasi/game-labirin/labirin-quest-tkj-metaai.html)
-- [Labirin Quest TKJ — Qwen](https://kdsurya.github.io/kumpulan-game-edukasi/game-labirin/labirin-quest-tkj-qwen.html)
-- [Labirin Quest TKJ — Gemini](https://kdsurya.github.io/kumpulan-game-edukasi/game-labirin/versi-gemini/)
+- [Labirin Quest TKJ — Qwen Free 3.8 Max thinking](https://kdsurya.github.io/kumpulan-game-edukasi/game-labirin/labirin-quest-tkj-qwen.html)
+- [Labirin Quest TKJ — Gemini 3.8 Flash high](https://kdsurya.github.io/kumpulan-game-edukasi/game-labirin/versi-gemini/)
 
 ## 4. Prompt game tarik tambang satu tim lawan komputer
 
