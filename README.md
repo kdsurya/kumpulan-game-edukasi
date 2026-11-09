@@ -55,6 +55,7 @@ buatkan game web labirin quest dengan ketentuan sebagai berikut:
 - untuk setiap pertanyaan akan muncul pemilihan opsi dalam bentuk semacam labirin yang memiliki area tempat opsi jawaban.
 - setiap soal memiliki 4 opsi jawaban.
 - user mesti bergerak ke area yang jadi jawabannya sebelum ketemu sama monster.
+- jumlah monsternya ada 4 untuk tiap satu sesi pertanyaan.
 - kalo jawabannya sesuai, area itu ditutup dari akses terhadap monster agar aman dan ada suara berhasil serta tanda centang dengan efek kembang api, dilanjutkan dengan menampilkan pertanyaan berikutnya.
 - kalo jawabannya tidak sesuai tampilkan efek bom dan tanda x, dan user bisa melanjutkan memilih di area lainnya yang belum dipilih sambil tetap berusaha menghindari monster yang bergerak secara acak.
 - kalo bisa ada musik latar instrumen saja.
